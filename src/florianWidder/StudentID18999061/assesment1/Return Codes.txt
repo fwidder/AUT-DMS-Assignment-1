@@ -1,0 +1,10 @@
+Return Codes:
+#0001 to #0999 Success
+#1001 to #1999 Error
+
+#X001 to #X499 TCP
+#X500 to #X999 UDP
+
+#0001 - User created
+
+#1001 - Server has reached maximum number of clients.

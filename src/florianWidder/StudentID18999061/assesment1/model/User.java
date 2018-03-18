@@ -1,8 +1,9 @@
 /**
  * 
  */
-package florianWidder.StudentID18999061.assesment1.server.model;
+package florianWidder.StudentID18999061.assesment1.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -10,11 +11,18 @@ import java.time.LocalDateTime;
  * @author Student ID 18999061
  *
  */
-public class User {
+public class User implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3359649237539654074L;
+
 	/**
 	 * Creates a new User
 	 * 
-	 * @param username name of the User
+	 * @param username
+	 *            name of the User
 	 */
 	public User(String username) {
 		this.username = username;
@@ -22,6 +30,7 @@ public class User {
 		lastSeen = System.currentTimeMillis();
 	}
 
+	private String udpSessionHash;
 	private String username;
 
 	/**
@@ -94,6 +103,20 @@ public class User {
 		} else if (!username.equals(other.username))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @return the udpSessionHash
+	 */
+	public String getUdpSessionHash() {
+		return udpSessionHash;
+	}
+
+	/**
+	 * @param udpSessionHash the udpSessionHash to set
+	 */
+	public void setUdpSessionHash(String udpSessionHash) {
+		this.udpSessionHash = udpSessionHash;
 	}
 
 }

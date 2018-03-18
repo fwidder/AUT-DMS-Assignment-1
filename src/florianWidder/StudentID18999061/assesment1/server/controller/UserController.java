@@ -1,11 +1,11 @@
 /**
  * 
  */
-package florianWidder.StudentID18999061.assesment1.server;
+package florianWidder.StudentID18999061.assesment1.server.controller;
 
 import java.util.ArrayList;
 
-import florianWidder.StudentID18999061.assesment1.server.model.User;
+import florianWidder.StudentID18999061.assesment1.model.User;
 
 /**
  * @author Florian Widder
@@ -20,17 +20,14 @@ public class UserController {
 	}
 
 	public boolean addUser(User user) {
-		if (users.contains(user))
+		if (user == null || users.contains(user))
 			return false;
 		users.add(user);
 		return true;
 	}
 
 	public boolean removeUser(User user) {
-		if (users.contains(user))
-			return false;
-		users.remove(user);
-		return true;
+		return users.remove(user);
 	}
 
 	public User getUser(String username) {

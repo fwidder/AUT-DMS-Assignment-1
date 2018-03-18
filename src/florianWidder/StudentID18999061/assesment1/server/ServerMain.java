@@ -19,9 +19,15 @@ public class ServerMain {
 	 */
 	public static int PORT = 12345;
 
-	public static final int maxNumberOfClients = 10;
+	/**
+	 * Maximum number of clients the Server will accept
+	 */
+	public static int maxNumberOfClients = 10;
 
-	public static final int sessionTimeout = 60000;
+	/**
+	 * Timeout for Clients getting kicked
+	 */
+	public static int sessionTimeout = 60000;
 
 	/**
 	 * ServerMain method to run the Server
@@ -41,17 +47,53 @@ public class ServerMain {
 						i++;
 						try {
 							PORT = Integer.parseInt(args[i]);
-							if (PORT <= 0 || PORT > 65535)
-								throw new Exception("Port out of Range: " + PORT);
-							Logger.warn("Port set to standart (" + PORT + ")");
+							if (PORT <= 0 || PORT > 65535) {
+								Logger.warn("Port set to standart (" + PORT + ")");
+								PORT = 12345;
+							}
 						} catch (Exception e) {
 							Logger.warn("Bad Port " + e);
 							PORT = 12345;
+							Logger.warn("Port set to standart (" + PORT + ")");
 						}
 					} else {
 						Logger.warn("--port passed but no Port specified");
-						Logger.warn("Port set to standart (" + PORT + ")");
 						PORT = 12345;
+						Logger.warn("Port set to standart (" + PORT + ")");
+					}
+					break;
+
+				case "--userLimit":
+					if (args.length > i + 1) {
+						i++;
+						try {
+							maxNumberOfClients = Integer.parseInt(args[i]);
+						} catch (Exception e) {
+							Logger.warn("Bad maxNumberOfClients " + e);
+							maxNumberOfClients = 10;
+							Logger.warn("maxNumberOfClients set to standart (" + maxNumberOfClients + ")");
+						}
+					} else {
+						Logger.warn("--userLimit passed but no maxNumberOfClients specified");
+						maxNumberOfClients = 10;
+						Logger.warn("maxNumberOfClients set to standart (" + maxNumberOfClients + ")");
+					}
+					break;
+
+				case "--timeOut":
+					if (args.length > i + 1) {
+						i++;
+						try {
+							sessionTimeout = Integer.parseInt(args[i]);
+						} catch (Exception e) {
+							Logger.warn("Bad sessionTimeout " + e);
+							sessionTimeout = 60000;
+							Logger.warn("sessionTimeout set to standart (" + sessionTimeout + ")");
+						}
+					} else {
+						Logger.warn("--timeOut passed but no sessionTimeout specified");
+						sessionTimeout = 60000;
+						Logger.warn("sessionTimeout set to standart (" + sessionTimeout + ")");
 					}
 					break;
 

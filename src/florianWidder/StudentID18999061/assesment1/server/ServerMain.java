@@ -17,7 +17,7 @@ public class ServerMain {
 	/**
 	 * Port the Server will be running on
 	 */
-	public static int PORT = 8080;
+	public static int PORT = 12345;
 
 	public static final int maxNumberOfClients = 10;
 
@@ -43,15 +43,15 @@ public class ServerMain {
 							PORT = Integer.parseInt(args[i]);
 							if (PORT <= 0 || PORT > 65535)
 								throw new Exception("Port out of Range: " + PORT);
-							Logger.info("Changed Port to " + PORT);
+							Logger.warn("Port set to standart (" + PORT + ")");
 						} catch (Exception e) {
 							Logger.warn("Bad Port " + e);
-							PORT = 8080;
+							PORT = 12345;
 						}
 					} else {
 						Logger.warn("--port passed but no Port specified");
-						Logger.warn("Port set to standart (8080)");
-						PORT = 8080;
+						Logger.warn("Port set to standart (" + PORT + ")");
+						PORT = 12345;
 					}
 					break;
 

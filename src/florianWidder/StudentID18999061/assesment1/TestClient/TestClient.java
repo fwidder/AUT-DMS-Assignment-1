@@ -31,7 +31,7 @@ public class TestClient {
 	 * @throws ClassNotFoundException
 	 */
 	public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
-		Socket socket = new Socket("localhost", 8080);
+		Socket socket = new Socket("localhost", 12345);
 		OutputStream socketOutputStream = socket.getOutputStream();
 		InputStream socketInputStream = socket.getInputStream();
 		ObjectInputStream socketReader = new ObjectInputStream(socketInputStream);

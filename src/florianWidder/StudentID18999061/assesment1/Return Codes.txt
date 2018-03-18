@@ -1,2 +1,6 @@
 Return Codes:
--1		Wrong type
+
+0		userExists			"User already exists. Please chosse a different Username."
+1		wrongDataType		"Wrong Datatype submittet"
+2		wrongRequestType	"Wrong Requesttype"
+3		userLimitReached	"Maximum number of useres reached. Please try again later."

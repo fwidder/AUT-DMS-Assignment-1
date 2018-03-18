@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  *
  */
 public class User implements Serializable {
-	
+
 	/**
 	 * 
 	 */
@@ -113,7 +113,8 @@ public class User implements Serializable {
 	}
 
 	/**
-	 * @param udpSessionHash the udpSessionHash to set
+	 * @param udpSessionHash
+	 *            the udpSessionHash to set
 	 */
 	public void setUdpSessionHash(String udpSessionHash) {
 		this.udpSessionHash = udpSessionHash;

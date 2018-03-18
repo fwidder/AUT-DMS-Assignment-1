@@ -13,12 +13,24 @@ public class LoginMessage extends Message {
 	 * 
 	 */
 	private static final long serialVersionUID = 5610444901054850422L;
-	public static final int loginRequest = 0, loginAccept = 1, loginDenied = 2;
+	/**
+	 * Return code for "loginRequest"
+	 */
+	public static final int loginRequest = 0;
+	/**
+	 * Return code for "loginAccept"
+	 */
+	public static final int loginAccept = 1;
+	/**
+	 * Return code for "loginDenied"
+	 */
+	public static final int loginDenied = 2;
 	private User user;
 	private int code;
 
 	/**
-	 * @param payload
+	 * @param user
+	 * @param code
 	 */
 	public LoginMessage(User user, int code) {
 		this.setUser(user);

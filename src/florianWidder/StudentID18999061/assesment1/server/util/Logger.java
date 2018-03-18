@@ -13,6 +13,11 @@ import java.util.Date;
  */
 public class Logger {
 
+	/**
+	 * Log Errors
+	 * 
+	 * @param o
+	 */
 	public static void error(Object o) {
 		now();
 		System.out.print("[ERROR] | ");
@@ -20,6 +25,11 @@ public class Logger {
 		end();
 	}
 
+	/**
+	 * Log Infos
+	 * 
+	 * @param o
+	 */
 	public static void info(Object o) {
 		now();
 		System.out.print("[INFO ] | ");
@@ -27,6 +37,11 @@ public class Logger {
 		end();
 	}
 
+	/**
+	 * Log Warnings
+	 * 
+	 * @param o
+	 */
 	public static void warn(Object o) {
 		now();
 		System.out.print("[WARN ] | ");
@@ -34,6 +49,11 @@ public class Logger {
 		end();
 	}
 
+	/**
+	 * Log debug Messages
+	 * 
+	 * @param o
+	 */
 	public static void debug(Object o) {
 		now();
 		System.out.print("[DEBUG] | ");

@@ -66,8 +66,6 @@ public class User implements Serializable {
 	}
 
 	/**
-	 * @param lastSeen
-	 *            the lastSeen to set
 	 */
 	public void updateLastSeen() {
 		lastSeen = System.currentTimeMillis();

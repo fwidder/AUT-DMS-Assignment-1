@@ -35,7 +35,7 @@ public class ClientThread implements Runnable {
 	/**
 	 * @param client
 	 * @param threads
-	 * @param userList
+	 * @param user
 	 * @throws IOException
 	 */
 	public ClientThread(Socket client, ClientThread[] threads, UserController user) throws IOException {
@@ -73,8 +73,7 @@ public class ClientThread implements Runnable {
 						try {
 							threads[i].sendMessage(logout);
 						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							Logger.warn("Problem while sending logout messages: " + e);
 						}
 				}
 				Logger.info("User \"" + user.getUsername() + "\" left the chat");

@@ -19,7 +19,6 @@ public abstract class Message implements Serializable {
 	private String payload;
 
 	/**
-	 * @param payload
 	 */
 	public Message() {
 	}

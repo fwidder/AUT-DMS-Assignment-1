@@ -16,7 +16,9 @@ public class SessionHashGenerator {
 	private SecureRandom random = new SecureRandom();
 
 	/**
-	 * @return
+	 * Generates a new Sessionhash
+	 * 
+	 * @return the hash
 	 */
 	public String nextSessionId() {
 		return new BigInteger(130, random).toString(32);

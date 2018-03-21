@@ -56,15 +56,17 @@ public class ClientThread implements Runnable {
 		while (true) {
 			try {
 				Object input = in.readObject();
-				if (input instanceof LogoutMessage) {
-					LogoutMessage logout = (LogoutMessage) input;
-					for (int i = 0; i < ServerMain.maxNumberOfClients; i++) {
-						if (threads[i] != null && threads[i] != this)
-							threads[i].sendMessage(logout);
+				if (input != null && input instanceof Message) {
+					if (input instanceof LogoutMessage) {
+						LogoutMessage logout = (LogoutMessage) input;
+						for (int i = 0; i < ServerMain.maxNumberOfClients; i++) {
+							if (threads[i] != null && threads[i] != this)
+								threads[i].sendMessage(logout);
+						}
+						Logger.info("User \"" + user.getUsername() + "\" left the chat - Logout");
+						closeSession();
+						break;
 					}
-					Logger.info("User \"" + user.getUsername() + "\" left the chat");
-					closeSession();
-					break;
 				}
 			} catch (ClassNotFoundException | IOException e) {
 				LogoutMessage logout = new LogoutMessage(user);
@@ -76,7 +78,7 @@ public class ClientThread implements Runnable {
 							Logger.warn("Problem while sending logout messages: " + e);
 						}
 				}
-				Logger.info("User \"" + user.getUsername() + "\" left the chat");
+				Logger.info("User \"" + user.getUsername() + "\" left the chat - Connection error");
 				closeSession();
 				break;
 			}

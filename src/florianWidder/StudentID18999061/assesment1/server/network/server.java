@@ -23,6 +23,8 @@ public class Server implements Runnable {
 	private ServerSocket serverSocket;
 	private final ClientThread[] threads;
 	private UserController userController;
+	
+	
 
 	/**
 	 * 
@@ -67,6 +69,10 @@ public class Server implements Runnable {
 		} catch (IOException e) {
 			Logger.error("Problem beim Starten des Servers: " + e);
 		}
+	}
+
+	public synchronized UserController getUserController() {
+		return userController;
 	}
 
 }

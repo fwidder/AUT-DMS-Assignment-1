@@ -2,7 +2,9 @@ package florianWidder.StudentID18999061.assesment1.server;
 
 import java.net.UnknownHostException;
 
+import florianWidder.StudentID18999061.assesment1.model.User;
 import florianWidder.StudentID18999061.assesment1.server.network.Server;
+import florianWidder.StudentID18999061.assesment1.server.network.UdpServer;
 import florianWidder.StudentID18999061.assesment1.server.util.IPTools;
 import florianWidder.StudentID18999061.assesment1.server.util.Logger;
 
@@ -25,9 +27,15 @@ public class ServerMain {
 	public static int maxNumberOfClients = 10;
 
 	/**
-	 * Timeout for Clients getting kicked
+	 * Timeout for Clients getting kicked milliseconds
 	 */
 	public static int sessionTimeout = 60000;
+
+	private static Server server;
+
+	public static User[] getUsers() {
+		return server.getUserController().getUserList();
+	}
 
 	/**
 	 * ServerMain method to run the Server
@@ -109,9 +117,14 @@ public class ServerMain {
 		} catch (UnknownHostException e) {
 			Logger.error("Error getting Local IP-Adress or Hostname: " + e);
 		}
-		Server server = new Server();
+		server = new Server();
 		Thread serverThread = new Thread(server);
-		serverThread.setName("Server");
+		serverThread.setName("Server TCP");
 		serverThread.start();
+
+		UdpServer udpServer = new UdpServer();
+		Thread udpServerThread = new Thread(udpServer);
+		udpServerThread.setName("Server UDP");
+		udpServerThread.start();
 	}
 }

@@ -21,7 +21,7 @@ public class UserController {
 	 * @param user
 	 * @return success
 	 */
-	public boolean addUser(User user) {
+	public synchronized boolean addUser(User user) {
 		if (user == null || users.contains(user))
 			return false;
 		users.add(user);
@@ -34,7 +34,7 @@ public class UserController {
 	 * @param user
 	 * @return success
 	 */
-	public boolean removeUser(User user) {
+	public synchronized boolean removeUser(User user) {
 		return users.remove(user);
 	}
 
@@ -44,7 +44,7 @@ public class UserController {
 	 * @param username
 	 * @return the User or null
 	 */
-	public User getUser(String username) {
+	public synchronized User getUser(String username) {
 		for (User user : users)
 			if (user.getUsername().equals(username))
 				return user;
@@ -56,7 +56,7 @@ public class UserController {
 	 * 
 	 * @return a User List
 	 */
-	public User[] getUserList() {
+	public synchronized User[] getUserList() {
 		return users.toArray(new User[0]);
 	}
 }

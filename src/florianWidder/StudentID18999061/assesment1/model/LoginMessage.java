@@ -34,6 +34,7 @@ public class LoginMessage extends Message {
 	 */
 	public LoginMessage(User user, int code) {
 		this.setUser(user);
+		this.setCode(code);
 	}
 
 	/**

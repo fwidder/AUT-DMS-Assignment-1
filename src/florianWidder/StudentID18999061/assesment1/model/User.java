@@ -118,4 +118,10 @@ public class User implements Serializable {
 		this.udpSessionHash = udpSessionHash;
 	}
 
+	@Override
+	public String toString() {
+		return "User [udpSessionHash=" + udpSessionHash + ", username=" + username + ", login=" + login + ", lastSeen="
+				+ lastSeen + "]";
+	}
+
 }

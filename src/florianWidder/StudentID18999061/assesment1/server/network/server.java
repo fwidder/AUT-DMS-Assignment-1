@@ -8,10 +8,10 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import florianWidder.StudentID18999061.assesment1.model.ErrorMessage;
 import florianWidder.StudentID18999061.assesment1.server.ServerMain;
 import florianWidder.StudentID18999061.assesment1.server.controller.UserController;
-import florianWidder.StudentID18999061.assesment1.server.util.Logger;
+import florianWidder.StudentID18999061.assesment1.shared.model.ErrorMessage;
+import florianWidder.StudentID18999061.assesment1.shared.util.Logger;
 
 /**
  * @author Florian Widder
@@ -23,8 +23,6 @@ public class Server implements Runnable {
 	private ServerSocket serverSocket;
 	private final ClientThread[] threads;
 	private UserController userController;
-	
-	
 
 	/**
 	 * 
@@ -32,6 +30,10 @@ public class Server implements Runnable {
 	public Server() {
 		threads = new ClientThread[ServerMain.maxNumberOfClients];
 		userController = new UserController();
+	}
+
+	public synchronized UserController getUserController() {
+		return userController;
 	}
 
 	/*
@@ -69,10 +71,6 @@ public class Server implements Runnable {
 		} catch (IOException e) {
 			Logger.error("Problem beim Starten des Servers: " + e);
 		}
-	}
-
-	public synchronized UserController getUserController() {
-		return userController;
 	}
 
 }

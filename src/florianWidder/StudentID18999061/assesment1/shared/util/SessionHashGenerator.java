@@ -1,7 +1,7 @@
 /**
  * 
  */
-package florianWidder.StudentID18999061.assesment1.server.util;
+package florianWidder.StudentID18999061.assesment1.shared.util;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;

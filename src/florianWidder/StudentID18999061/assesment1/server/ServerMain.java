@@ -2,11 +2,11 @@ package florianWidder.StudentID18999061.assesment1.server;
 
 import java.net.UnknownHostException;
 
-import florianWidder.StudentID18999061.assesment1.model.User;
 import florianWidder.StudentID18999061.assesment1.server.network.Server;
 import florianWidder.StudentID18999061.assesment1.server.network.UdpServer;
-import florianWidder.StudentID18999061.assesment1.server.util.IPTools;
-import florianWidder.StudentID18999061.assesment1.server.util.Logger;
+import florianWidder.StudentID18999061.assesment1.shared.model.User;
+import florianWidder.StudentID18999061.assesment1.shared.util.IPTools;
+import florianWidder.StudentID18999061.assesment1.shared.util.Logger;
 
 /**
  * ServerMain Class to start the Server for Assignment 1 Project

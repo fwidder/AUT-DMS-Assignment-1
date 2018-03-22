@@ -1,7 +1,7 @@
 /**
  * 
  */
-package florianWidder.StudentID18999061.assesment1.model;
+package florianWidder.StudentID18999061.assesment1.shared.model;
 
 /**
  * @author Florian Widder
@@ -27,10 +27,10 @@ public class ErrorMessage extends Message {
 	 * Error Code for "userLimitReached"
 	 */
 	public static final int userLimitReached = 3;
-	private int errorCode;
 	private static final String[] errorText = { "User already exists. Please chosse a different Username.",
 			"Wrong Datatype submittet", "Wrong Requesttype",
 			"Maximum number of useres reached. Please try again later." };
+	private int errorCode;
 
 	/**
 	 * @param errorCode
@@ -49,19 +49,19 @@ public class ErrorMessage extends Message {
 	}
 
 	/**
+	 * @return the errorText
+	 */
+	public String getErrorText() {
+		return errorText[errorCode];
+	}
+
+	/**
 	 * @param errorCode
 	 *            the errorCode to set
 	 */
 	public void setErrorCode(int errorCode) {
 		this.errorCode = errorCode;
 		this.setPayload(getErrorCode() + " - " + getErrorText());
-	}
-
-	/**
-	 * @return the errorText
-	 */
-	public String getErrorText() {
-		return errorText[errorCode];
 	}
 
 	@Override

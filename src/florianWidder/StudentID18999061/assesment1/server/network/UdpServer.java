@@ -4,15 +4,20 @@
 package florianWidder.StudentID18999061.assesment1.server.network;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-import florianWidder.StudentID18999061.assesment1.model.RequestMessage;
 import florianWidder.StudentID18999061.assesment1.server.ServerMain;
+import florianWidder.StudentID18999061.assesment1.shared.model.Message;
+import florianWidder.StudentID18999061.assesment1.shared.model.RequestMessage;
+import florianWidder.StudentID18999061.assesment1.shared.model.ResponseMessage;
 
 /**
  * @author Florian Widder
@@ -42,25 +47,39 @@ public class UdpServer implements Runnable {
 				Object o = is.readObject();
 				if (!(o instanceof RequestMessage))
 					continue;
+				Message ret = null;
 				RequestMessage request = (RequestMessage) o;
 				if (request.getCode() != RequestMessage.request || request.getPayload() == null
 						|| request.getPayload().isEmpty()) {
 					request.setCode(RequestMessage.malformed);
 					request.setPayload("Empty Requestbody or wrong code.");
+					ret = request;
 				} else
 					switch (request.getPayload().toLowerCase()) {
 					case "userlist":
-						request.setCode(RequestMessage.acceptet);
-						request.setPayload("");
+						ResponseMessage response = new ResponseMessage();
+						response.setCode(ResponseMessage.acceptet);
+						response.setPayload("userlist");
+						response.setResponse(ServerMain.getUsers());
+						ret = response;
 						break;
 					default:
 						continue;
 					}
+
+				if (ret == null)
+					continue;
+
 				InetAddress IPAddress = incomingPacket.getAddress();
 				int port = incomingPacket.getPort();
-				String reply = "Thank you for the message";
-				byte[] replyBytea = reply.getBytes();
-				DatagramPacket replyPacket = new DatagramPacket(replyBytea, replyBytea.length, IPAddress, port);
+				ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+				ObjectOutput oo = new ObjectOutputStream(bStream);
+				oo.writeObject(ret);
+				oo.close();
+
+				byte[] serializedMessage = bStream.toByteArray();
+				DatagramPacket replyPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress,
+						port);
 				socket.send(replyPacket);
 			}
 

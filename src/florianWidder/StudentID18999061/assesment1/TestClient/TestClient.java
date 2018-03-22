@@ -11,9 +11,10 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import florianWidder.StudentID18999061.assesment1.model.LoginMessage;
-import florianWidder.StudentID18999061.assesment1.model.LogoutMessage;
-import florianWidder.StudentID18999061.assesment1.model.User;
+import florianWidder.StudentID18999061.assesment1.shared.model.ConnectMessage;
+import florianWidder.StudentID18999061.assesment1.shared.model.DisconnectMessage;
+import florianWidder.StudentID18999061.assesment1.shared.model.MessageTo;
+import florianWidder.StudentID18999061.assesment1.shared.model.User;
 
 /**
  * @author Florian Widder
@@ -35,29 +36,31 @@ public class TestClient {
 		ObjectOutputStream socketWriter = new ObjectOutputStream(socketOutputStream);
 		BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
 		User user = null;
-		LoginMessage login = null;
+		ConnectMessage login = null;
 		System.out.println("Username:");
 		String userName = console.readLine();
 		user = new User(userName);
-		login = new LoginMessage(user, LoginMessage.loginRequest);
+		login = new ConnectMessage(user, ConnectMessage.loginRequest);
 		socketWriter.writeObject(login);
 		Object input = socketReader.readObject();
-		if (input instanceof LoginMessage) {
-			login = (LoginMessage) input;
-			if (login.getCode() == LoginMessage.loginAccept)
-				user = login.getUser();
+		if (input instanceof ConnectMessage) {
+			login = (ConnectMessage) input;
+			if (login.getCode() == ConnectMessage.loginAccept)
+				user = login.getSender();
 			else
-				throw new Exception("Login denied:"+login.getCode());
+				throw new Exception("Login denied:" + login.getCode());
 		} else {
 			throw new Exception("Recieved wrong Mimetype");
 
 		}
 		System.out.println("Logged in: " + user.toString());
-		
-		//TODO do stuff
-		
-		socketWriter.writeObject(new LogoutMessage(user));
-		System.out.println("Logged out");		
+
+		MessageTo m = new MessageTo();
+		m.setPayload("Test");
+		m.setRec("Test");
+		socketWriter.writeObject(m);
+		socketWriter.writeObject(new DisconnectMessage(user));
+		System.out.println("Logged out");
 		console.close();
 		socketWriter.close();
 		socketReader.close();

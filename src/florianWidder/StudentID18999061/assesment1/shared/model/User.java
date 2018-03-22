@@ -1,7 +1,7 @@
 /**
  * 
  */
-package florianWidder.StudentID18999061.assesment1.model;
+package florianWidder.StudentID18999061.assesment1.shared.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,21 +18,9 @@ public class User implements Serializable {
 	 */
 	private static final long serialVersionUID = 3359649237539654074L;
 
-	/**
-	 * Creates a new User
-	 * 
-	 * @param username
-	 *            name of the User
-	 */
-	public User(String username) {
-		this.username = username;
-		login = LocalDateTime.now();
-		lastSeen = System.currentTimeMillis();
-	}
-
 	private String udpSessionHash;
-	private String username;
 
+	private String username;
 	/**
 	 * Login time
 	 */
@@ -44,46 +32,15 @@ public class User implements Serializable {
 	private long lastSeen;
 
 	/**
-	 * @return the username
-	 */
-	public String getUsername() {
-		return username;
-	}
-
-	/**
+	 * Creates a new User
+	 * 
 	 * @param username
-	 *            the username to set
+	 *            name of the User
 	 */
-	public void setUsername(String username) {
+	public User(String username) {
 		this.username = username;
-	}
-
-	/**
-	 * @return the lastSeen
-	 */
-	public long getLastSeen() {
-		return System.currentTimeMillis() - lastSeen;
-	}
-
-	/**
-	 */
-	public void updateLastSeen() {
+		login = LocalDateTime.now();
 		lastSeen = System.currentTimeMillis();
-	}
-
-	/**
-	 * @return the login
-	 */
-	public LocalDateTime getLogin() {
-		return login;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((username == null) ? 0 : username.hashCode());
-		return result;
 	}
 
 	@Override
@@ -104,10 +61,39 @@ public class User implements Serializable {
 	}
 
 	/**
+	 * @return the lastSeen
+	 */
+	public long getLastSeen() {
+		return System.currentTimeMillis() - lastSeen;
+	}
+
+	/**
+	 * @return the login
+	 */
+	public LocalDateTime getLogin() {
+		return login;
+	}
+
+	/**
 	 * @return the udpSessionHash
 	 */
 	public String getUdpSessionHash() {
 		return udpSessionHash;
+	}
+
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		return result;
 	}
 
 	/**
@@ -118,10 +104,24 @@ public class User implements Serializable {
 		this.udpSessionHash = udpSessionHash;
 	}
 
+	/**
+	 * @param username
+	 *            the username to set
+	 */
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
 	@Override
 	public String toString() {
 		return "User [udpSessionHash=" + udpSessionHash + ", username=" + username + ", login=" + login + ", lastSeen="
 				+ lastSeen + "]";
+	}
+
+	/**
+	 */
+	public void updateLastSeen() {
+		lastSeen = System.currentTimeMillis();
 	}
 
 }

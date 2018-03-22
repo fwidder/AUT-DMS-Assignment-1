@@ -1,7 +1,7 @@
 /**
  * 
  */
-package florianWidder.StudentID18999061.assesment1.model;
+package florianWidder.StudentID18999061.assesment1.shared.model;
 
 import java.io.Serializable;
 
@@ -17,6 +17,7 @@ public abstract class Message implements Serializable {
 	 */
 	private static final long serialVersionUID = -7395957707850011524L;
 	private String payload;
+	private User sender;
 
 	/**
 	 */
@@ -30,11 +31,19 @@ public abstract class Message implements Serializable {
 		return payload;
 	}
 
+	public User getSender() {
+		return sender;
+	}
+
 	/**
 	 * @param payload
 	 *            the payload to set
 	 */
 	public void setPayload(String payload) {
 		this.payload = payload;
+	}
+
+	public void setSender(User sender) {
+		this.sender = sender;
 	}
 }

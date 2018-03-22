@@ -5,7 +5,7 @@ package florianWidder.StudentID18999061.assesment1.server.controller;
 
 import java.util.ArrayList;
 
-import florianWidder.StudentID18999061.assesment1.model.User;
+import florianWidder.StudentID18999061.assesment1.shared.model.User;
 
 /**
  * @author Florian Widder
@@ -29,16 +29,6 @@ public class UserController {
 	}
 
 	/**
-	 * Removes a User
-	 * 
-	 * @param user
-	 * @return success
-	 */
-	public synchronized boolean removeUser(User user) {
-		return users.remove(user);
-	}
-
-	/**
 	 * Search for a User by username
 	 * 
 	 * @param username
@@ -58,5 +48,15 @@ public class UserController {
 	 */
 	public synchronized User[] getUserList() {
 		return users.toArray(new User[0]);
+	}
+
+	/**
+	 * Removes a User
+	 * 
+	 * @param user
+	 * @return success
+	 */
+	public synchronized boolean removeUser(User user) {
+		return users.remove(user);
 	}
 }

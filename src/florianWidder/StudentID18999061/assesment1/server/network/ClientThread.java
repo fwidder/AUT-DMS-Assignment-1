@@ -8,15 +8,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import florianWidder.StudentID18999061.assesment1.model.ErrorMessage;
-import florianWidder.StudentID18999061.assesment1.model.LoginMessage;
-import florianWidder.StudentID18999061.assesment1.model.LogoutMessage;
-import florianWidder.StudentID18999061.assesment1.model.Message;
-import florianWidder.StudentID18999061.assesment1.model.User;
 import florianWidder.StudentID18999061.assesment1.server.ServerMain;
 import florianWidder.StudentID18999061.assesment1.server.controller.UserController;
-import florianWidder.StudentID18999061.assesment1.server.util.Logger;
-import florianWidder.StudentID18999061.assesment1.server.util.SessionHashGenerator;
+import florianWidder.StudentID18999061.assesment1.shared.model.BroadcastMessage;
+import florianWidder.StudentID18999061.assesment1.shared.model.ConnectMessage;
+import florianWidder.StudentID18999061.assesment1.shared.model.DisconnectMessage;
+import florianWidder.StudentID18999061.assesment1.shared.model.ErrorMessage;
+import florianWidder.StudentID18999061.assesment1.shared.model.Message;
+import florianWidder.StudentID18999061.assesment1.shared.model.MessageTo;
+import florianWidder.StudentID18999061.assesment1.shared.model.User;
+import florianWidder.StudentID18999061.assesment1.shared.util.Logger;
+import florianWidder.StudentID18999061.assesment1.shared.util.SessionHashGenerator;
 
 /**
  * @author Florian Widder
@@ -46,6 +48,50 @@ public class ClientThread implements Runnable {
 		this.userList = user;
 	}
 
+	/**
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 * 
+	 */
+	private void chooseUser() throws ClassNotFoundException, IOException {
+		User newUser = null;
+		do {
+			if (newUser != null) {
+				ConnectMessage error = new ConnectMessage(newUser, ConnectMessage.loginDenied);
+				out.writeObject(error);
+			}
+			Object input = in.readObject();
+			if (input instanceof ConnectMessage) {
+				ConnectMessage login = (ConnectMessage) input;
+				if (login.getCode() == ConnectMessage.loginRequest) {
+					newUser = login.getSender();
+				} else {
+					ErrorMessage error = new ErrorMessage(ErrorMessage.wrongRequestType);
+					out.writeObject(error);
+					newUser = null;
+				}
+			} else {
+				ErrorMessage error = new ErrorMessage(ErrorMessage.wrongDataType);
+				out.writeObject(error);
+				newUser = null;
+			}
+		} while (!userList.addUser(newUser));
+		newUser.setUdpSessionHash(new SessionHashGenerator().nextSessionId());
+		this.user = newUser;
+		out.writeObject(new ConnectMessage(newUser, ConnectMessage.loginAccept));
+		Logger.info("New User: \"" + newUser.getUsername() + "\" is now online!");
+	}
+
+	/**
+	 * 
+	 */
+	public void closeSession() {
+		userList.removeUser(user);
+		for (int i = 0; i < ServerMain.maxNumberOfClients; i++)
+			if (threads[i] != null && threads[i].equals(this))
+				threads[i] = null;
+	}
+
 	@Override
 	public void run() {
 		try {
@@ -57,8 +103,8 @@ public class ClientThread implements Runnable {
 			try {
 				Object input = in.readObject();
 				if (input != null && input instanceof Message) {
-					if (input instanceof LogoutMessage) {
-						LogoutMessage logout = (LogoutMessage) input;
+					if (input instanceof DisconnectMessage) {
+						DisconnectMessage logout = (DisconnectMessage) input;
 						for (int i = 0; i < ServerMain.maxNumberOfClients; i++) {
 							if (threads[i] != null && threads[i] != this)
 								threads[i].sendMessage(logout);
@@ -66,10 +112,30 @@ public class ClientThread implements Runnable {
 						Logger.info("User \"" + user.getUsername() + "\" left the chat - Logout");
 						closeSession();
 						break;
+					} else if (input instanceof MessageTo) {
+						MessageTo m = (MessageTo) input;
+						for (ClientThread c : threads) {
+							if (c != null && c.user != null && c.user.getUsername().equals(m.getRec())) {
+								c.sendMessage(m);
+							}
+						}
+					} else if (input instanceof BroadcastMessage) {
+						BroadcastMessage m = (BroadcastMessage) input;
+						for (ClientThread c : threads) {
+							if (c != null) {
+								c.sendMessage(m);
+							}
+						}
+					} else {
+						ErrorMessage err = new ErrorMessage(ErrorMessage.wrongDataType);
+						out.writeObject(err);
 					}
+				} else {
+					ErrorMessage err = new ErrorMessage(ErrorMessage.wrongDataType);
+					out.writeObject(err);
 				}
 			} catch (ClassNotFoundException | IOException e) {
-				LogoutMessage logout = new LogoutMessage(user);
+				DisconnectMessage logout = new DisconnectMessage(user);
 				for (int i = 0; i < ServerMain.maxNumberOfClients; i++) {
 					if (threads[i] != null && !threads[i].equals(this))
 						try {
@@ -86,55 +152,11 @@ public class ClientThread implements Runnable {
 	}
 
 	/**
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 * 
-	 */
-	private void chooseUser() throws ClassNotFoundException, IOException {
-		User newUser = null;
-		do {
-			if (newUser != null) {
-				LoginMessage error = new LoginMessage(newUser, LoginMessage.loginDenied);
-				out.writeObject(error);
-			}
-			Object input = in.readObject();
-			if (input instanceof LoginMessage) {
-				LoginMessage login = (LoginMessage) input;
-				if (login.getCode() == LoginMessage.loginRequest) {
-					newUser = login.getUser();
-				} else {
-					ErrorMessage error = new ErrorMessage(ErrorMessage.wrongRequestType);
-					out.writeObject(error);
-					newUser = null;
-				}
-			} else {
-				ErrorMessage error = new ErrorMessage(ErrorMessage.wrongDataType);
-				out.writeObject(error);
-				newUser = null;
-			}
-		} while (!userList.addUser(newUser));
-		newUser.setUdpSessionHash(new SessionHashGenerator().nextSessionId());
-		this.user = newUser;
-		out.writeObject(new LoginMessage(newUser, LoginMessage.loginAccept));
-		Logger.info("New User: \"" + newUser.getUsername() + "\" is now online!");
-	}
-
-	/**
 	 * @param m
 	 * @throws IOException
 	 */
 	public void sendMessage(Message m) throws IOException {
 		out.writeObject(m);
-	}
-
-	/**
-	 * 
-	 */
-	public void closeSession() {
-		userList.removeUser(user);
-		for (int i = 0; i < ServerMain.maxNumberOfClients; i++)
-			if (threads[i] != null && threads[i].equals(this))
-				threads[i] = null;
 	}
 
 }

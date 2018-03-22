@@ -23,6 +23,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import florianWidder.StudentID18999061.assesment1.client.ClientMain;
+import florianWidder.StudentID18999061.assesment1.shared.model.BroadcastMessage;
+import florianWidder.StudentID18999061.assesment1.shared.model.Message;
+import florianWidder.StudentID18999061.assesment1.shared.model.MessageTo;
 import florianWidder.StudentID18999061.assesment1.shared.model.User;
 
 public class ClientUI extends JFrame implements Runnable {
@@ -147,10 +150,12 @@ public class ClientUI extends JFrame implements Runnable {
 
 			boolean[] columnEditables = new boolean[] { false, false, false, false };
 
+			@Override
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
 			}
 
+			@Override
 			public boolean isCellEditable(int row, int column) {
 				return columnEditables[column];
 			}
@@ -169,10 +174,12 @@ public class ClientUI extends JFrame implements Runnable {
 
 			boolean[] columnEditables = new boolean[] { false };
 
+			@Override
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
 			}
 
+			@Override
 			public boolean isCellEditable(int row, int column) {
 				return columnEditables[column];
 			}
@@ -219,8 +226,23 @@ public class ClientUI extends JFrame implements Runnable {
 
 		btnSend = new JButton("Send");
 		btnSend.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
-
+				Message m = null;
+				if (cmbBxReciver.getSelectedItem().equals("Broadcast")) {
+					m = new BroadcastMessage();
+				} else {
+					m = new MessageTo((String) cmbBxReciver.getSelectedItem());
+				}
+				try {
+					m.setSender(ClientMain.getUser());
+					m.setPayload(inputMessage.getText());
+					inputMessage.setText("");
+					ClientMain.getConnection().sendMessage(m);
+				} catch (IOException | NullPointerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		GridBagConstraints gbc_btnSend = new GridBagConstraints();
@@ -274,5 +296,10 @@ public class ClientUI extends JFrame implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+	}
+
+	public void newMessage() {
+		// TODO Auto-generated method stub
+		
 	}
 }

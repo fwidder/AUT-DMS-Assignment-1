@@ -8,6 +8,10 @@ public class MessageTo extends Message {
 	private static final long serialVersionUID = -1182471325700008016L;
 	private String rec;
 
+	public MessageTo(String rec) {
+		this.rec = rec;
+	}
+
 	public String getRec() {
 		return rec;
 	}

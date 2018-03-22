@@ -80,6 +80,10 @@ public class ClientThread implements Runnable {
 		this.user = newUser;
 		out.writeObject(new ConnectMessage(newUser, ConnectMessage.loginAccept));
 		Logger.info("New User: \"" + newUser.getUsername() + "\" is now online!");
+		for (int i = 0; i < ServerMain.maxNumberOfClients; i++) {
+			if (threads[i] != null && threads[i] != this)
+				threads[i].sendMessage(new ConnectMessage(user, ConnectMessage.loginBroadcast));
+		}
 	}
 
 	/**
@@ -135,7 +139,7 @@ public class ClientThread implements Runnable {
 					out.writeObject(err);
 				}
 			} catch (ClassNotFoundException | IOException e) {
-				DisconnectMessage logout = new DisconnectMessage(user);
+				DisconnectMessage logout = new DisconnectMessage(user, DisconnectMessage.logoutError);
 				for (int i = 0; i < ServerMain.maxNumberOfClients; i++) {
 					if (threads[i] != null && !threads[i].equals(this))
 						try {

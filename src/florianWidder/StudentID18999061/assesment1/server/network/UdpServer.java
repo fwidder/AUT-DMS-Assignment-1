@@ -58,17 +58,15 @@ public class UdpServer implements Runnable {
 					switch (request.getPayload().toLowerCase()) {
 					case "userlist":
 						ResponseMessage response = new ResponseMessage();
-						response.setCode(ResponseMessage.acceptet);
+						response.setCode(RequestMessage.acceptet);
 						response.setPayload("userlist");
 						response.setResponse(ServerMain.getUsers());
 						ret = response;
 						break;
+
 					default:
 						continue;
 					}
-
-				if (ret == null)
-					continue;
 
 				InetAddress IPAddress = incomingPacket.getAddress();
 				int port = incomingPacket.getPort();

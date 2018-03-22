@@ -12,6 +12,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import florianWidder.StudentID18999061.assesment1.client.ClientMain;
 import florianWidder.StudentID18999061.assesment1.client.ui.LoginUI;
@@ -29,8 +30,9 @@ public class Connection implements Runnable {
 	private ObjectInputStream socketReader;
 	private Socket socket;
 	private boolean login = true;
+	private LinkedBlockingQueue<Message> messages = new LinkedBlockingQueue<Message>();
 
-	public User[] getUserList() throws IOException, ClassNotFoundException {
+	public synchronized User[] getUserList() throws IOException, ClassNotFoundException {
 		DatagramSocket clientSocket = new DatagramSocket();
 		InetAddress IPAddress = InetAddress.getByName(ClientMain.getIP());
 		byte[] sendData = new byte[1024];
@@ -67,7 +69,7 @@ public class Connection implements Runnable {
 		return login;
 	}
 
-	private void login() throws ClassNotFoundException, IOException {
+	private synchronized void login() throws ClassNotFoundException, IOException {
 		ConnectMessage m = new ConnectMessage(ClientMain.getUser(), ConnectMessage.loginRequest);
 		socketWriter.writeObject(m);
 		Object tmp = socketReader.readObject();
@@ -91,8 +93,8 @@ public class Connection implements Runnable {
 		}
 	}
 
-	public void logout() throws IOException {
-		socketWriter.writeObject(new DisconnectMessage(ClientMain.getUser()));
+	public synchronized void logout() throws IOException {
+		socketWriter.writeObject(new DisconnectMessage(ClientMain.getUser(), DisconnectMessage.logoutNormal));
 		Logger.info("Logout...");
 		socketWriter.close();
 		socketReader.close();
@@ -109,15 +111,29 @@ public class Connection implements Runnable {
 			socketReader = new ObjectInputStream(socketInputStream);
 			socketWriter = new ObjectOutputStream(socketOutputStream);
 			login();
-		} catch (IOException | ClassNotFoundException e) {
+
+			while (true) {
+				Object o = socketReader.readObject();
+				if(o instanceof Message) {
+					Message m = (Message) o;
+					messages.put(m);
+				}
+				ClientMain.getUI().newMessage();
+				Logger.info(ClientMain.getUser().getUsername() + "→" + o.toString());
+			}
+
+		} catch (IOException | ClassNotFoundException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void sendMessage(Message message) {
-		// TODO Auto-generated method stub
+	public synchronized void sendMessage(Message message) throws IOException {
+		socketWriter.writeObject(message);
+	}
 
+	public synchronized LinkedBlockingQueue<Message> getMessages() {
+		return messages;
 	}
 
 }

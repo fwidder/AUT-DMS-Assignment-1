@@ -39,6 +39,7 @@ public class ErrorUI extends JDialog {
 			{
 				JButton okButton = new JButton("OK");
 				okButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						dispose();
 					}

@@ -25,7 +25,11 @@ public class ConnectMessage extends Message {
 	 * Return code for "loginDenied"
 	 */
 	public static final int loginDenied = 2;
-	private int code;
+	/**
+	 * Return code for "loginBroadcast"
+	 */
+	public static final int loginBroadcast = 3;
+	private int code = -1;
 
 	/**
 	 * @param user

@@ -104,6 +104,7 @@ public class LoginUI extends JDialog {
 			{
 				JButton okButton = new JButton("Login");
 				okButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						ClientMain.setIP(getInputServerIp().getText());
 						ClientMain.setPort(Integer.parseInt(getInputServerPort().getText()));
@@ -118,6 +119,7 @@ public class LoginUI extends JDialog {
 			{
 				JButton cancelButton = new JButton("Cancel");
 				cancelButton.addActionListener(new ActionListener() {
+					@Override
 					public void actionPerformed(ActionEvent e) {
 						System.exit(0);
 					}

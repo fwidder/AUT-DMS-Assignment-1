@@ -17,7 +17,7 @@ public class RequestMessage extends Message {
 	public static final int denied = 1;
 	public static final int acceptet = 2;
 	public static final int malformed = 3;
-	private int code;
+	private int code = -1;
 
 	/**
 	 * @return the code

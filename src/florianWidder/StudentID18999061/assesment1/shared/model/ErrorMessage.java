@@ -30,7 +30,7 @@ public class ErrorMessage extends Message {
 	private static final String[] errorText = { "User already exists. Please chosse a different Username.",
 			"Wrong Datatype submittet", "Wrong Requesttype",
 			"Maximum number of useres reached. Please try again later." };
-	private int errorCode;
+	private int errorCode = -1;
 
 	/**
 	 * @param errorCode

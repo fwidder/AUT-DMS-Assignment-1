@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package florianWidder.StudentID18999061.assesment1.shared.model;
 
@@ -10,30 +10,30 @@ package florianWidder.StudentID18999061.assesment1.shared.model;
  */
 public class DisconnectMessage extends Message {
 
-	public static final int logoutNormal = 0;
-	public static final int logoutError = 1;
+    public static final int logoutNormal = 0;
+    public static final int logoutError = 1;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3243825538764447513L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 3243825538764447513L;
 
-	private int reason = -1;
+    private int reason = -1;
 
-	/**
-	 * @param user
-	 */
-	public DisconnectMessage(User user, int reason) {
-		this.setSender(user);
-		this.reason = reason;
-	}
+    /**
+     * @param user
+     */
+    public DisconnectMessage(final User user, final int reason) {
+	setSender(user);
+	this.reason = reason;
+    }
 
-	public int getReason() {
-		return reason;
-	}
+    public int getReason() {
+	return reason;
+    }
 
-	public void setReason(int reason) {
-		this.reason = reason;
-	}
+    public void setReason(final int reason) {
+	this.reason = reason;
+    }
 
 }

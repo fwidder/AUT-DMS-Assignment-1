@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package florianWidder.StudentID18999061.assesment1.server.network;
 
@@ -20,57 +20,57 @@ import florianWidder.StudentID18999061.assesment1.shared.util.Logger;
  */
 public class Server implements Runnable {
 
-	private ServerSocket serverSocket;
-	private final ClientThread[] threads;
-	private UserController userController;
+    private ServerSocket serverSocket;
+    private final ClientThread[] threads;
+    private final UserController userController;
 
-	/**
-	 * 
-	 */
-	public Server() {
-		threads = new ClientThread[ServerMain.maxNumberOfClients];
-		userController = new UserController();
-	}
+    /**
+     *
+     */
+    public Server() {
+	threads = new ClientThread[ServerMain.maxNumberOfClients];
+	userController = new UserController();
+    }
 
-	public synchronized UserController getUserController() {
-		return userController;
-	}
+    public synchronized UserController getUserController() {
+	return userController;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Runnable#run()
-	 */
-	@Override
-	public void run() {
-		try {
-			serverSocket = new ServerSocket(ServerMain.PORT);
-			while (true) {
-				Socket client;
-				client = serverSocket.accept();
-				Logger.info("New Client: " + client.getInetAddress());
-				int i;
-				for (i = 0; i < ServerMain.maxNumberOfClients; i++) {
-					if (threads[i] == null) {
-						threads[i] = new ClientThread(client, threads, userController);
-						Thread clientThread = new Thread(threads[i]);
-						clientThread.setName("Client " + i);
-						clientThread.start();
-						break;
-					}
-				}
-				if (i == ServerMain.maxNumberOfClients) {
-					ErrorMessage error = new ErrorMessage(ErrorMessage.userLimitReached);
-					try (ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream())) {
-						out.writeObject(error);
-					}
-					client.close();
-					Logger.warn(error.toString());
-				}
-			}
-		} catch (IOException e) {
-			Logger.error("Problem beim Starten des Servers: " + e);
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Runnable#run()
+     */
+    @Override
+    public void run() {
+	try {
+	    serverSocket = new ServerSocket(ServerMain.PORT);
+	    while (true) {
+		Socket client;
+		client = serverSocket.accept();
+		Logger.info("New Client: " + client.getInetAddress());
+		int i;
+		for (i = 0; i < ServerMain.maxNumberOfClients; i++) {
+		    if (threads[i] == null) {
+			threads[i] = new ClientThread(client, threads, userController);
+			final Thread clientThread = new Thread(threads[i]);
+			clientThread.setName("Client " + i);
+			clientThread.start();
+			break;
+		    }
 		}
+		if (i == ServerMain.maxNumberOfClients) {
+		    final ErrorMessage error = new ErrorMessage(ErrorMessage.userLimitReached);
+		    try (ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream())) {
+			out.writeObject(error);
+		    }
+		    client.close();
+		    Logger.warn(error.toString());
+		}
+	    }
+	} catch (final IOException e) {
+	    Logger.error("Problem beim Starten des Servers: " + e);
 	}
+    }
 
 }

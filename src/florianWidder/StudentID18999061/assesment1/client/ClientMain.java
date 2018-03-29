@@ -1,6 +1,7 @@
 package florianWidder.StudentID18999061.assesment1.client;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -12,85 +13,85 @@ import florianWidder.StudentID18999061.assesment1.shared.model.User;
 import florianWidder.StudentID18999061.assesment1.shared.util.Logger;
 
 public class ClientMain {
-	private static String IP;
-	private static int Port;
-	private static User user;
-	private static ClientUI UI;
-	private static Connection connection;
+    private static InetAddress IP;
+    private static int Port;
+    private static User user;
+    static ClientUI UI;
+    static Connection connection;
 
-	public synchronized static Connection getConnection() {
-		return connection;
+    public synchronized static Connection getConnection() {
+	return ClientMain.connection;
+    }
+
+    public synchronized static InetAddress getIP() {
+	return ClientMain.IP;
+    }
+
+    public synchronized static int getPort() {
+	return ClientMain.Port;
+    }
+
+    public synchronized static ClientUI getUI() {
+	return ClientMain.UI;
+    }
+
+    public synchronized static User getUser() {
+	return ClientMain.user;
+    }
+
+    public static void main(final String[] args) throws InterruptedException, UnknownHostException, IOException {
+	Logger.info("Client Starting...");
+
+	final LoginUI login = new LoginUI();
+
+	login.setModal(true);
+
+	login.setVisible(true);
+
+	while (login.isShowing()) {
+	    ;
+	}
+	ClientMain.connection = new Connection();
+	final Thread TCPClient = new Thread(ClientMain.connection);
+	TCPClient.setName("TCPClient");
+	TCPClient.start();
+
+	while (ClientMain.connection.isLogin()) {
+	    ;
 	}
 
-	public synchronized static String getIP() {
-		return IP;
-	}
+	ClientMain.UI = new ClientUI();
 
-	public synchronized static int getPort() {
-		return Port;
-	}
+	final Timer t = new Timer();
 
-	public synchronized static ClientUI getUI() {
-		return UI;
-	}
+	t.schedule(new TimerTask() {
 
-	public synchronized static User getUser() {
-		return user;
-	}
+	    @Override
+	    public void run() {
+		User[] userList;
+		try {
+		    userList = Connection.getUserList();
+		    ClientMain.UI.refreshUsers(userList);
+		} catch (IOException | ClassNotFoundException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		}
+	    }
 
-	public static void main(String[] args) throws InterruptedException, UnknownHostException, IOException {
-		Logger.info("Client Starting...");
+	}, 0, 10000);
 
-		LoginUI login = new LoginUI();
+	ClientMain.UI.setVisible(true);
+    }
 
-		login.setModal(true);
+    public synchronized static void setIP(final InetAddress inetAddress) {
+	ClientMain.IP = inetAddress;
+    }
 
-		login.setVisible(true);
+    public synchronized static void setPort(final int port) {
+	ClientMain.Port = port;
+    }
 
-		while (login.isShowing())
-			;
-
-		connection = new Connection();
-		Thread TCPClient = new Thread(connection);
-		TCPClient.setName("TCPClient");
-		TCPClient.start();
-
-		while (connection.isLogin())
-			;
-
-		UI = new ClientUI();
-
-		Timer t = new Timer();
-
-		t.schedule(new TimerTask() {
-
-			@Override
-			public void run() {
-				User[] userList;
-				try {
-					userList = connection.getUserList();
-					UI.refreshUsers(userList);
-				} catch (IOException | ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
-		}, 0, 10000);
-
-		UI.setVisible(true);
-	}
-
-	public synchronized static void setIP(String iP) {
-		IP = iP;
-	}
-
-	public synchronized static void setPort(int port) {
-		Port = port;
-	}
-
-	public synchronized static void setUser(User user) {
-		ClientMain.user = user;
-	}
-
+    public synchronized static void setUser(final User user) {
+	ClientMain.user = user;
+    }
 }

@@ -24,116 +24,143 @@ import florianWidder.StudentID18999061.assesment1.shared.model.ResponseMessage;
 import florianWidder.StudentID18999061.assesment1.shared.model.User;
 import florianWidder.StudentID18999061.assesment1.shared.util.Logger;
 
+/**
+ * @author Florian Widder
+ * @author Student ID 18999061
+ *
+ */
 public class Connection implements Runnable {
 
-	private ObjectOutputStream socketWriter;
-	private ObjectInputStream socketReader;
-	private Socket socket;
-	private boolean login = true;
-	private LinkedBlockingQueue<Message> messages = new LinkedBlockingQueue<Message>();
+    /**
+     * @return the Userlist
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+    public synchronized static User[] getUserList() throws IOException, ClassNotFoundException {
+	final DatagramSocket clientSocket = new DatagramSocket();
+	final InetAddress IPAddress = ClientMain.getIP();
+	byte[] sendData = new byte[1024];
+	final byte[] receiveData = new byte[1024];
+	final RequestMessage m = new RequestMessage();
+	m.setCode(RequestMessage.request);
+	m.setPayload("userlist");
+	m.setSender(ClientMain.getUser());
+	final ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+	final ObjectOutput oo = new ObjectOutputStream(bStream);
+	oo.writeObject(m);
+	oo.close();
+	sendData = bStream.toByteArray();
+	final DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress,
+		ClientMain.getPort());
+	clientSocket.send(sendPacket);
+	final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+	clientSocket.receive(receivePacket);
+	final byte[] data = receivePacket.getData();
+	final ByteArrayInputStream in = new ByteArrayInputStream(data);
+	final ObjectInputStream is = new ObjectInputStream(in);
+	final Object o = is.readObject();
+	if (!(o instanceof ResponseMessage)) {
+	    clientSocket.close();
+	    return new User[0];
+	}
+	clientSocket.close();
+	final ResponseMessage re = (ResponseMessage) o;
+	if (re.getResponse() instanceof User[]) {
+	    return (User[]) re.getResponse();
+	}
+	return new User[0];
+    }
 
-	public synchronized User[] getUserList() throws IOException, ClassNotFoundException {
-		DatagramSocket clientSocket = new DatagramSocket();
-		InetAddress IPAddress = InetAddress.getByName(ClientMain.getIP());
-		byte[] sendData = new byte[1024];
-		byte[] receiveData = new byte[1024];
-		RequestMessage m = new RequestMessage();
-		m.setCode(RequestMessage.request);
-		m.setPayload("userlist");
-		m.setSender(ClientMain.getUser());
-		ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-		ObjectOutput oo = new ObjectOutputStream(bStream);
-		oo.writeObject(m);
-		oo.close();
-		sendData = bStream.toByteArray();
-		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, ClientMain.getPort());
-		clientSocket.send(sendPacket);
-		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-		clientSocket.receive(receivePacket);
-		byte[] data = receivePacket.getData();
-		ByteArrayInputStream in = new ByteArrayInputStream(data);
-		ObjectInputStream is = new ObjectInputStream(in);
-		Object o = is.readObject();
-		if (!(o instanceof ResponseMessage)) {
-			clientSocket.close();
-			return new User[0];
+    private ObjectOutputStream socketWriter;
+    private ObjectInputStream socketReader;
+    private Socket socket;
+    private boolean login = true;
+
+    private final LinkedBlockingQueue<Message> messages = new LinkedBlockingQueue<>();
+
+    /**
+     * @return messages
+     */
+    public synchronized LinkedBlockingQueue<Message> getMessages() {
+	return messages;
+    }
+
+    /**
+     * @return login state
+     */
+    public synchronized boolean isLogin() {
+	return login;
+    }
+
+    private synchronized void login() throws ClassNotFoundException, IOException {
+	final ConnectMessage m = new ConnectMessage(ClientMain.getUser(), ConnectMessage.loginRequest);
+	socketWriter.writeObject(m);
+	final Object tmp = socketReader.readObject();
+	if (tmp instanceof ConnectMessage) {
+	    final ConnectMessage in = (ConnectMessage) tmp;
+	    if (in.getCode() != ConnectMessage.loginAccept) {
+		final LoginUI login = new LoginUI();
+
+		login.setModal(true);
+
+		login.setVisible(true);
+
+		while (login.isShowing()) {
+		    ;
 		}
-		clientSocket.close();
-		ResponseMessage re = (ResponseMessage) o;
-		if (re.getResponse() instanceof User[])
-			return (User[]) re.getResponse();
-		return new User[0];
+
+		login();
+	    } else {
+		ClientMain.setUser(in.getSender());
+		login = false;
+	    }
 	}
+    }
 
-	public synchronized boolean isLogin() {
-		return login;
-	}
+    /**
+     * @throws IOException
+     */
+    public synchronized void logout() throws IOException {
+	socketWriter.writeObject(new DisconnectMessage(ClientMain.getUser(), DisconnectMessage.logoutNormal));
+	Logger.info("Logout...");
+	socketWriter.close();
+	socketReader.close();
+	socket.close();
 
-	private synchronized void login() throws ClassNotFoundException, IOException {
-		ConnectMessage m = new ConnectMessage(ClientMain.getUser(), ConnectMessage.loginRequest);
-		socketWriter.writeObject(m);
-		Object tmp = socketReader.readObject();
-		if (tmp instanceof ConnectMessage) {
-			ConnectMessage in = (ConnectMessage) tmp;
-			if (in.getCode() != ConnectMessage.loginAccept) {
-				LoginUI login = new LoginUI();
+    }
 
-				login.setModal(true);
+    @Override
+    public void run() {
+	try {
+	    socket = new Socket(ClientMain.getIP(), ClientMain.getPort());
+	    final OutputStream socketOutputStream = socket.getOutputStream();
+	    final InputStream socketInputStream = socket.getInputStream();
+	    socketReader = new ObjectInputStream(socketInputStream);
+	    socketWriter = new ObjectOutputStream(socketOutputStream);
+	    login();
 
-				login.setVisible(true);
-
-				while (login.isShowing())
-					;
-
-				login();
-			} else {
-				ClientMain.setUser(in.getSender());
-				login = false;
-			}
+	    while (true) {
+		final Object o = socketReader.readObject();
+		if (o instanceof Message) {
+		    final Message m = (Message) o;
+		    ClientMain.getUI().newMessage(m);
 		}
+	    }
+
+	} catch (IOException | ClassNotFoundException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
 	}
+    }
 
-	public synchronized void logout() throws IOException {
-		socketWriter.writeObject(new DisconnectMessage(ClientMain.getUser(), DisconnectMessage.logoutNormal));
-		Logger.info("Logout...");
-		socketWriter.close();
-		socketReader.close();
-		socket.close();
+    /**
+     * @param message
+     * @throws IOException
+     */
+    public synchronized void sendMessage(final Message message) throws IOException {
+	socketWriter.writeObject(message);
 
-	}
-
-	@Override
-	public void run() {
-		try {
-			socket = new Socket(ClientMain.getIP(), ClientMain.getPort());
-			OutputStream socketOutputStream = socket.getOutputStream();
-			InputStream socketInputStream = socket.getInputStream();
-			socketReader = new ObjectInputStream(socketInputStream);
-			socketWriter = new ObjectOutputStream(socketOutputStream);
-			login();
-
-			while (true) {
-				Object o = socketReader.readObject();
-				if(o instanceof Message) {
-					Message m = (Message) o;
-					messages.put(m);
-				}
-				ClientMain.getUI().newMessage();
-				Logger.info(ClientMain.getUser().getUsername() + "→" + o.toString());
-			}
-
-		} catch (IOException | ClassNotFoundException | InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public synchronized void sendMessage(Message message) throws IOException {
-		socketWriter.writeObject(message);
-	}
-
-	public synchronized LinkedBlockingQueue<Message> getMessages() {
-		return messages;
-	}
+	ClientMain.getUI().newMessage(message);
+    }
 
 }

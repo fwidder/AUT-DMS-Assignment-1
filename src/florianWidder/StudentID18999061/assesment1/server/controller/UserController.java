@@ -13,7 +13,7 @@ import florianWidder.StudentID18999061.assesment1.shared.model.User;
  *
  */
 public class UserController {
-    private final ArrayList<User> users = new ArrayList<>();
+    private ArrayList<User> users = new ArrayList<>();
 
     /**
      * Adds a new User
@@ -21,7 +21,7 @@ public class UserController {
      * @param user
      * @return success
      */
-    public synchronized boolean addUser(final User user) {
+    public synchronized boolean addUser(User user) {
 	if (user == null || users.contains(user)) {
 	    return false;
 	}
@@ -35,8 +35,8 @@ public class UserController {
      * @param username
      * @return the User or null
      */
-    public synchronized User getUser(final String username) {
-	for (final User user : users) {
+    public synchronized User getUser(String username) {
+	for (User user : users) {
 	    if (user.getUsername().equals(username)) {
 		return user;
 	    }
@@ -59,7 +59,7 @@ public class UserController {
      * @param user
      * @return success
      */
-    public synchronized boolean removeUser(final User user) {
+    public synchronized boolean removeUser(User user) {
 	return users.remove(user);
     }
 }

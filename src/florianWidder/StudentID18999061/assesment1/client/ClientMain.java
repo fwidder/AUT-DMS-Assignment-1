@@ -8,6 +8,7 @@ import java.util.TimerTask;
 
 import florianWidder.StudentID18999061.assesment1.client.network.Connection;
 import florianWidder.StudentID18999061.assesment1.client.ui.ClientUI;
+import florianWidder.StudentID18999061.assesment1.client.ui.ErrorUI;
 import florianWidder.StudentID18999061.assesment1.client.ui.LoginUI;
 import florianWidder.StudentID18999061.assesment1.shared.model.User;
 import florianWidder.StudentID18999061.assesment1.shared.util.Logger;
@@ -39,10 +40,10 @@ public class ClientMain {
 	return ClientMain.user;
     }
 
-    public static void main(final String[] args) throws InterruptedException, UnknownHostException, IOException {
+    public static void main(String[] args) throws InterruptedException, UnknownHostException, IOException {
 	Logger.info("Client Starting...");
 
-	final LoginUI login = new LoginUI();
+	LoginUI login = new LoginUI();
 
 	login.setModal(true);
 
@@ -52,7 +53,7 @@ public class ClientMain {
 	    ;
 	}
 	ClientMain.connection = new Connection();
-	final Thread TCPClient = new Thread(ClientMain.connection);
+	Thread TCPClient = new Thread(ClientMain.connection);
 	TCPClient.setName("TCPClient");
 	TCPClient.start();
 
@@ -60,9 +61,13 @@ public class ClientMain {
 	    ;
 	}
 
+	if (ClientMain.user == null || ClientMain.user.getUsername() == null) {
+	    System.exit(0);
+	}
+
 	ClientMain.UI = new ClientUI();
 
-	final Timer t = new Timer();
+	Timer t = new Timer();
 
 	t.schedule(new TimerTask() {
 
@@ -73,8 +78,7 @@ public class ClientMain {
 		    userList = Connection.getUserList();
 		    ClientMain.UI.refreshUsers(userList);
 		} catch (IOException | ClassNotFoundException e) {
-		    // TODO Auto-generated catch block
-		    e.printStackTrace();
+		    new ErrorUI(e.toString());
 		}
 	    }
 
@@ -83,15 +87,15 @@ public class ClientMain {
 	ClientMain.UI.setVisible(true);
     }
 
-    public synchronized static void setIP(final InetAddress inetAddress) {
+    public synchronized static void setIP(InetAddress inetAddress) {
 	ClientMain.IP = inetAddress;
     }
 
-    public synchronized static void setPort(final int port) {
+    public synchronized static void setPort(int port) {
 	ClientMain.Port = port;
     }
 
-    public synchronized static void setUser(final User user) {
+    public synchronized static void setUser(User user) {
 	ClientMain.user = user;
     }
 }

@@ -5,7 +5,7 @@ public class ResponseMessage extends RequestMessage {
     /**
      *
      */
-    private static final long serialVersionUID = 1L;
+    private final static long serialVersionUID = 1L;
 
     private Object Response;
 
@@ -13,7 +13,7 @@ public class ResponseMessage extends RequestMessage {
 	return Response;
     }
 
-    public void setResponse(final Object response) {
+    public void setResponse(Object response) {
 	Response = response;
     }
 

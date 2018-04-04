@@ -36,20 +36,20 @@ public class UdpServer implements Runnable {
 	DatagramSocket socket;
 	try {
 	    socket = new DatagramSocket(ServerMain.PORT);
-	    final byte[] incomingData = new byte[1024];
+	    byte[] incomingData = new byte[1024];
 
 	    while (true) {
-		final DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
+		DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
 		socket.receive(incomingPacket);
-		final byte[] data = incomingPacket.getData();
-		final ByteArrayInputStream in = new ByteArrayInputStream(data);
-		final ObjectInputStream is = new ObjectInputStream(in);
-		final Object o = is.readObject();
+		byte[] data = incomingPacket.getData();
+		ByteArrayInputStream in = new ByteArrayInputStream(data);
+		ObjectInputStream is = new ObjectInputStream(in);
+		Object o = is.readObject();
 		if (!(o instanceof RequestMessage)) {
 		    continue;
 		}
 		Message ret = null;
-		final RequestMessage request = (RequestMessage) o;
+		RequestMessage request = (RequestMessage) o;
 		if (request.getCode() != RequestMessage.request || request.getPayload() == null
 			|| request.getPayload().isEmpty()) {
 		    request.setCode(RequestMessage.malformed);
@@ -58,7 +58,7 @@ public class UdpServer implements Runnable {
 		} else {
 		    switch (request.getPayload().toLowerCase()) {
 		    case "userlist":
-			final ResponseMessage response = new ResponseMessage();
+			ResponseMessage response = new ResponseMessage();
 			response.setCode(RequestMessage.acceptet);
 			response.setPayload("userlist");
 			response.setResponse(ServerMain.getUsers());
@@ -70,25 +70,25 @@ public class UdpServer implements Runnable {
 		    }
 		}
 
-		final InetAddress IPAddress = incomingPacket.getAddress();
-		final int port = incomingPacket.getPort();
-		final ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-		final ObjectOutput oo = new ObjectOutputStream(bStream);
+		InetAddress IPAddress = incomingPacket.getAddress();
+		int port = incomingPacket.getPort();
+		ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+		ObjectOutput oo = new ObjectOutputStream(bStream);
 		oo.writeObject(ret);
 		oo.close();
 
-		final byte[] serializedMessage = bStream.toByteArray();
-		final DatagramPacket replyPacket = new DatagramPacket(serializedMessage, serializedMessage.length,
-			IPAddress, port);
+		byte[] serializedMessage = bStream.toByteArray();
+		DatagramPacket replyPacket = new DatagramPacket(serializedMessage, serializedMessage.length, IPAddress,
+			port);
 		socket.send(replyPacket);
 	    }
 
-	} catch (final SocketException e) {
+	} catch (SocketException e) {
 	    e.printStackTrace();
-	} catch (final IOException e) {
+	} catch (IOException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
-	} catch (final ClassNotFoundException e) {
+	} catch (ClassNotFoundException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}

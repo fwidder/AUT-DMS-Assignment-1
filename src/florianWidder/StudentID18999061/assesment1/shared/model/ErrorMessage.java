@@ -10,24 +10,24 @@ package florianWidder.StudentID18999061.assesment1.shared.model;
  */
 public class ErrorMessage extends Message {
 
-    private static final long serialVersionUID = -3209420011193382698L;
+    private final static long serialVersionUID = -3209420011193382698L;
     /**
      * Error Code for "userExists"
      */
-    public static final int userExists = 0;
+    public static int userExists = 0;
     /**
      * Error Code for "wrongDataType"
      */
-    public static final int wrongDataType = 1;
+    public static int wrongDataType = 1;
     /**
      * Error Code for "wrongRequestType"
      */
-    public static final int wrongRequestType = 2;
+    public static int wrongRequestType = 2;
     /**
      * Error Code for "userLimitReached"
      */
-    public static final int userLimitReached = 3;
-    private static final String[] errorText = { "User already exists. Please chosse a different Username.",
+    public static int userLimitReached = 3;
+    private static String[] errorText = { "User already exists. Please chosse a different Username.",
 	    "Wrong Datatype submittet", "Wrong Requesttype",
 	    "Maximum number of useres reached. Please try again later." };
     private int errorCode = -1;
@@ -36,7 +36,7 @@ public class ErrorMessage extends Message {
      * @param errorCode
      *            the errorCode
      */
-    public ErrorMessage(final int errorCode) {
+    public ErrorMessage(int errorCode) {
 	setErrorCode(errorCode);
 	setPayload(getErrorCode() + " - " + getErrorText());
     }
@@ -59,7 +59,7 @@ public class ErrorMessage extends Message {
      * @param errorCode
      *            the errorCode to set
      */
-    public void setErrorCode(final int errorCode) {
+    public void setErrorCode(int errorCode) {
 	this.errorCode = errorCode;
 	setPayload(getErrorCode() + " - " + getErrorText());
     }

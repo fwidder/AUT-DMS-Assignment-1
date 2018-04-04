@@ -22,8 +22,8 @@ public class LoginUI extends JDialog {
     /**
      *
      */
-    private static final long serialVersionUID = 4373345965223290669L;
-    private final JPanel contentPanel = new JPanel();
+    private final static long serialVersionUID = 4373345965223290669L;
+    private JPanel contentPanel = new JPanel();
     private JTextField inputUsername;
     private JTextField inputServerIp;
     private JTextField inputServerPort;
@@ -37,15 +37,15 @@ public class LoginUI extends JDialog {
 	getContentPane().setLayout(new BorderLayout());
 	contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 	getContentPane().add(contentPanel, BorderLayout.CENTER);
-	final GridBagLayout gbl_contentPanel = new GridBagLayout();
+	GridBagLayout gbl_contentPanel = new GridBagLayout();
 	gbl_contentPanel.columnWidths = new int[] { 0, 0, 0 };
 	gbl_contentPanel.rowHeights = new int[] { 0, 0, 0, 0 };
 	gbl_contentPanel.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
 	gbl_contentPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
 	contentPanel.setLayout(gbl_contentPanel);
 	{
-	    final JLabel txtUsername = new JLabel("Username:");
-	    final GridBagConstraints gbc_txtUsername = new GridBagConstraints();
+	    JLabel txtUsername = new JLabel("Username:");
+	    GridBagConstraints gbc_txtUsername = new GridBagConstraints();
 	    gbc_txtUsername.anchor = GridBagConstraints.EAST;
 	    gbc_txtUsername.insets = new Insets(0, 0, 5, 5);
 	    gbc_txtUsername.gridx = 0;
@@ -54,7 +54,7 @@ public class LoginUI extends JDialog {
 	}
 	{
 	    inputUsername = new JTextField();
-	    final GridBagConstraints gbc_inputUsername = new GridBagConstraints();
+	    GridBagConstraints gbc_inputUsername = new GridBagConstraints();
 	    gbc_inputUsername.insets = new Insets(0, 0, 5, 0);
 	    gbc_inputUsername.fill = GridBagConstraints.HORIZONTAL;
 	    gbc_inputUsername.gridx = 1;
@@ -63,8 +63,8 @@ public class LoginUI extends JDialog {
 	    inputUsername.setColumns(10);
 	}
 	{
-	    final JLabel txtServerIP = new JLabel("Server IP:");
-	    final GridBagConstraints gbc_txtServerIP = new GridBagConstraints();
+	    JLabel txtServerIP = new JLabel("Server IP:");
+	    GridBagConstraints gbc_txtServerIP = new GridBagConstraints();
 	    gbc_txtServerIP.anchor = GridBagConstraints.EAST;
 	    gbc_txtServerIP.insets = new Insets(0, 0, 5, 5);
 	    gbc_txtServerIP.gridx = 0;
@@ -74,7 +74,7 @@ public class LoginUI extends JDialog {
 	{
 	    inputServerIp = new JTextField();
 	    inputServerIp.setText("localhost");
-	    final GridBagConstraints gbc_inputServerIp = new GridBagConstraints();
+	    GridBagConstraints gbc_inputServerIp = new GridBagConstraints();
 	    gbc_inputServerIp.insets = new Insets(0, 0, 5, 0);
 	    gbc_inputServerIp.fill = GridBagConstraints.HORIZONTAL;
 	    gbc_inputServerIp.gridx = 1;
@@ -83,8 +83,8 @@ public class LoginUI extends JDialog {
 	    inputServerIp.setColumns(10);
 	}
 	{
-	    final JLabel txtServerPort = new JLabel("Server Port: ");
-	    final GridBagConstraints gbc_txtServerPort = new GridBagConstraints();
+	    JLabel txtServerPort = new JLabel("Server Port: ");
+	    GridBagConstraints gbc_txtServerPort = new GridBagConstraints();
 	    gbc_txtServerPort.insets = new Insets(0, 0, 0, 5);
 	    gbc_txtServerPort.anchor = GridBagConstraints.EAST;
 	    gbc_txtServerPort.gridx = 0;
@@ -94,7 +94,7 @@ public class LoginUI extends JDialog {
 	{
 	    inputServerPort = new JTextField();
 	    inputServerPort.setText("12345");
-	    final GridBagConstraints gbc_inputServerPort = new GridBagConstraints();
+	    GridBagConstraints gbc_inputServerPort = new GridBagConstraints();
 	    gbc_inputServerPort.fill = GridBagConstraints.HORIZONTAL;
 	    gbc_inputServerPort.gridx = 1;
 	    gbc_inputServerPort.gridy = 2;
@@ -102,17 +102,16 @@ public class LoginUI extends JDialog {
 	    inputServerPort.setColumns(10);
 	}
 	{
-	    final JPanel buttonPane = new JPanel();
+	    JPanel buttonPane = new JPanel();
 	    getContentPane().add(buttonPane, BorderLayout.SOUTH);
 	    buttonPane.setLayout(new BorderLayout(0, 0));
 	    {
-		final JButton okButton = new JButton("Login");
+		JButton okButton = new JButton("Login");
 		okButton.addActionListener(arg0 -> {
 		    try {
 			ClientMain.setIP(InetAddress.getByName(getInputServerIp().getText()));
-		    } catch (final UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		    } catch (UnknownHostException e) {
+			new ErrorUI(e.toString());
 		    }
 		    ClientMain.setPort(Integer.parseInt(getInputServerPort().getText()));
 		    ClientMain.setUser(new User(getInputUsername().getText()));
@@ -123,7 +122,7 @@ public class LoginUI extends JDialog {
 		getRootPane().setDefaultButton(okButton);
 	    }
 	    {
-		final JButton cancelButton = new JButton("Cancel");
+		JButton cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(e -> System.exit(0));
 		cancelButton.setActionCommand("Cancel");
 		buttonPane.add(cancelButton, BorderLayout.EAST);

@@ -26,11 +26,6 @@ public class ServerMain {
      */
     public static int maxNumberOfClients = 10;
 
-    /**
-     * Timeout for Clients getting kicked milliseconds
-     */
-    public static int sessionTimeout = 60000;
-
     private static Server server;
 
     public static User[] getUsers() {
@@ -43,12 +38,12 @@ public class ServerMain {
      * @param args
      *            Java-VM Arguments
      */
-    public static void main(final String[] args) {
+    public static void main(String[] args) {
 	Logger.info("Server starting...");
 	// Parsing args
 	if (args != null && args.length > 0) {
 	    for (int i = 0; i < args.length; i++) {
-		final String arg = args[i].toLowerCase();
+		String arg = args[i].toLowerCase();
 		switch (arg) {
 		case "--port":
 		    if (args.length > i + 1) {
@@ -59,7 +54,7 @@ public class ServerMain {
 				Logger.warn("Port set to standart (" + ServerMain.PORT + ")");
 				ServerMain.PORT = 12345;
 			    }
-			} catch (final Exception e) {
+			} catch (Exception e) {
 			    Logger.warn("Bad Port " + e);
 			    ServerMain.PORT = 12345;
 			    Logger.warn("Port set to standart (" + ServerMain.PORT + ")");
@@ -76,7 +71,7 @@ public class ServerMain {
 			i++;
 			try {
 			    ServerMain.maxNumberOfClients = Integer.parseInt(args[i]);
-			} catch (final Exception e) {
+			} catch (Exception e) {
 			    Logger.warn("Bad maxNumberOfClients " + e);
 			    ServerMain.maxNumberOfClients = 10;
 			    Logger.warn("maxNumberOfClients set to standart (" + ServerMain.maxNumberOfClients + ")");
@@ -88,43 +83,27 @@ public class ServerMain {
 		    }
 		    break;
 
-		case "--timeOut":
-		    if (args.length > i + 1) {
-			i++;
-			try {
-			    ServerMain.sessionTimeout = Integer.parseInt(args[i]);
-			} catch (final Exception e) {
-			    Logger.warn("Bad sessionTimeout " + e);
-			    ServerMain.sessionTimeout = 60000;
-			    Logger.warn("sessionTimeout set to standart (" + ServerMain.sessionTimeout + ")");
-			}
-		    } else {
-			Logger.warn("--timeOut passed but no sessionTimeout specified");
-			ServerMain.sessionTimeout = 60000;
-			Logger.warn("sessionTimeout set to standart (" + ServerMain.sessionTimeout + ")");
-		    }
-		    break;
-
 		default:
 		    Logger.warn("Unkown argument \"" + arg + "\" ignored");
 		    break;
 		}
 	    }
 	}
+
 	// Print Server Informations
 	try {
 	    Logger.info(
 		    "Server IP: " + IPTools.getIP() + " | " + IPTools.getHostname() + " on Port: " + ServerMain.PORT);
-	} catch (final UnknownHostException e) {
+	} catch (UnknownHostException e) {
 	    Logger.error("Error getting Local IP-Adress or Hostname: " + e);
 	}
 	ServerMain.server = new Server();
-	final Thread serverThread = new Thread(ServerMain.server);
+	Thread serverThread = new Thread(ServerMain.server);
 	serverThread.setName("Server TCP");
 	serverThread.start();
 
-	final UdpServer udpServer = new UdpServer();
-	final Thread udpServerThread = new Thread(udpServer);
+	UdpServer udpServer = new UdpServer();
+	Thread udpServerThread = new Thread(udpServer);
 	udpServerThread.setName("Server UDP");
 	udpServerThread.start();
     }

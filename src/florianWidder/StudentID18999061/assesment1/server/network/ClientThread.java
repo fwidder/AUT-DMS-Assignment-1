@@ -26,11 +26,11 @@ import florianWidder.StudentID18999061.assesment1.shared.util.Logger;
  */
 public class ClientThread implements Runnable {
 
-    private final ClientThread[] threads;
-    private final Socket client;
-    private final ObjectOutputStream out;
-    private final ObjectInputStream in;
-    private final UserController userList;
+    private ClientThread[] threads;
+    private Socket client;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
+    private UserController userList;
     private User user;
 
     /**
@@ -39,8 +39,7 @@ public class ClientThread implements Runnable {
      * @param user
      * @throws IOException
      */
-    public ClientThread(final Socket client, final ClientThread[] threads, final UserController user)
-	    throws IOException {
+    public ClientThread(Socket client, ClientThread[] threads, UserController user) throws IOException {
 	this.client = client;
 	this.threads = threads;
 	out = new ObjectOutputStream(this.client.getOutputStream());
@@ -57,21 +56,21 @@ public class ClientThread implements Runnable {
 	User newUser = null;
 	do {
 	    if (newUser != null) {
-		final ConnectMessage error = new ConnectMessage(newUser, ConnectMessage.loginDenied);
+		ConnectMessage error = new ConnectMessage(newUser, ConnectMessage.loginDenied);
 		out.writeObject(error);
 	    }
-	    final Object input = in.readObject();
+	    Object input = in.readObject();
 	    if (input instanceof ConnectMessage) {
-		final ConnectMessage login = (ConnectMessage) input;
+		ConnectMessage login = (ConnectMessage) input;
 		if (login.getCode() == ConnectMessage.loginRequest) {
 		    newUser = login.getSender();
 		} else {
-		    final ErrorMessage error = new ErrorMessage(ErrorMessage.wrongRequestType);
+		    ErrorMessage error = new ErrorMessage(ErrorMessage.wrongRequestType);
 		    out.writeObject(error);
 		    newUser = null;
 		}
 	    } else {
-		final ErrorMessage error = new ErrorMessage(ErrorMessage.wrongDataType);
+		ErrorMessage error = new ErrorMessage(ErrorMessage.wrongDataType);
 		out.writeObject(error);
 		newUser = null;
 	    }
@@ -107,10 +106,10 @@ public class ClientThread implements Runnable {
 	}
 	while (true) {
 	    try {
-		final Object input = in.readObject();
+		Object input = in.readObject();
 		if (input != null && input instanceof Message) {
 		    if (input instanceof DisconnectMessage) {
-			final DisconnectMessage logout = (DisconnectMessage) input;
+			DisconnectMessage logout = (DisconnectMessage) input;
 			for (int i = 0; i < ServerMain.maxNumberOfClients; i++) {
 			    if (threads[i] != null && threads[i] != this) {
 				threads[i].sendMessage(logout);
@@ -120,34 +119,34 @@ public class ClientThread implements Runnable {
 			closeSession();
 			break;
 		    } else if (input instanceof MessageTo) {
-			final MessageTo m = (MessageTo) input;
-			for (final ClientThread c : threads) {
+			MessageTo m = (MessageTo) input;
+			for (ClientThread c : threads) {
 			    if (c != null && c.user != null && c.user.getUsername().equals(m.getRec())) {
 				c.sendMessage(m);
 			    }
 			}
 		    } else if (input instanceof BroadcastMessage) {
-			final BroadcastMessage m = (BroadcastMessage) input;
-			for (final ClientThread c : threads) {
+			BroadcastMessage m = (BroadcastMessage) input;
+			for (ClientThread c : threads) {
 			    if (c != null) {
 				c.sendMessage(m);
 			    }
 			}
 		    } else {
-			final ErrorMessage err = new ErrorMessage(ErrorMessage.wrongDataType);
+			ErrorMessage err = new ErrorMessage(ErrorMessage.wrongDataType);
 			out.writeObject(err);
 		    }
 		} else {
-		    final ErrorMessage err = new ErrorMessage(ErrorMessage.wrongDataType);
+		    ErrorMessage err = new ErrorMessage(ErrorMessage.wrongDataType);
 		    out.writeObject(err);
 		}
 	    } catch (ClassNotFoundException | IOException e) {
-		final DisconnectMessage logout = new DisconnectMessage(user, DisconnectMessage.logoutError);
+		DisconnectMessage logout = new DisconnectMessage(user, DisconnectMessage.logoutError);
 		for (int i = 0; i < ServerMain.maxNumberOfClients; i++) {
 		    if (threads[i] != null && !threads[i].equals(this)) {
 			try {
 			    threads[i].sendMessage(logout);
-			} catch (final IOException e1) {
+			} catch (IOException e1) {
 			    Logger.warn("Problem while sending logout messages: " + e);
 			}
 		    }
@@ -163,7 +162,7 @@ public class ClientThread implements Runnable {
      * @param m
      * @throws IOException
      */
-    public synchronized void sendMessage(final Message m) throws IOException {
+    public synchronized void sendMessage(Message m) throws IOException {
 	out.writeObject(m);
     }
 

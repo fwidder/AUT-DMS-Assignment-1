@@ -12,11 +12,11 @@ public class RequestMessage extends Message {
     /**
      *
      */
-    private static final long serialVersionUID = 4903842640515693924L;
-    public static final int request = 0;
-    public static final int denied = 1;
-    public static final int acceptet = 2;
-    public static final int malformed = 3;
+    private final static long serialVersionUID = 4903842640515693924L;
+    public static int request = 0;
+    public static int denied = 1;
+    public static int acceptet = 2;
+    public static int malformed = 3;
     private int code = -1;
 
     /**
@@ -30,7 +30,7 @@ public class RequestMessage extends Message {
      * @param code
      *            the code to set
      */
-    public void setCode(final int code) {
+    public void setCode(int code) {
 	this.code = code;
     }
 }

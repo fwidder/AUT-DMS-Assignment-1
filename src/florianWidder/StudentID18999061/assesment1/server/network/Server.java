@@ -21,8 +21,8 @@ import florianWidder.StudentID18999061.assesment1.shared.util.Logger;
 public class Server implements Runnable {
 
     private ServerSocket serverSocket;
-    private final ClientThread[] threads;
-    private final UserController userController;
+    private ClientThread[] threads;
+    private UserController userController;
 
     /**
      *
@@ -53,14 +53,14 @@ public class Server implements Runnable {
 		for (i = 0; i < ServerMain.maxNumberOfClients; i++) {
 		    if (threads[i] == null) {
 			threads[i] = new ClientThread(client, threads, userController);
-			final Thread clientThread = new Thread(threads[i]);
+			Thread clientThread = new Thread(threads[i]);
 			clientThread.setName("Client " + i);
 			clientThread.start();
 			break;
 		    }
 		}
 		if (i == ServerMain.maxNumberOfClients) {
-		    final ErrorMessage error = new ErrorMessage(ErrorMessage.userLimitReached);
+		    ErrorMessage error = new ErrorMessage(ErrorMessage.userLimitReached);
 		    try (ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream())) {
 			out.writeObject(error);
 		    }
@@ -68,7 +68,7 @@ public class Server implements Runnable {
 		    Logger.warn(error.toString());
 		}
 	    }
-	} catch (final IOException e) {
+	} catch (IOException e) {
 	    Logger.error("Problem beim Starten des Servers: " + e);
 	}
     }

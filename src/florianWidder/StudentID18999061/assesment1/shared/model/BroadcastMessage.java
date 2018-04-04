@@ -5,7 +5,7 @@ public class BroadcastMessage extends Message {
     /**
      *
      */
-    private static final long serialVersionUID = 3489842261318069369L;
+    private final static long serialVersionUID = 3489842261318069369L;
 
     @Override
     public String toString() {

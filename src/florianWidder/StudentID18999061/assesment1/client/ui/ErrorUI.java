@@ -15,13 +15,13 @@ public class ErrorUI extends JDialog {
     /**
      *
      */
-    private static final long serialVersionUID = -5541572110324103057L;
-    private final JPanel contentPanel = new JPanel();
+    private final static long serialVersionUID = -5541572110324103057L;
+    private JPanel contentPanel = new JPanel();
 
     /**
      * Create the dialog.
      */
-    public ErrorUI(final String errorText) {
+    public ErrorUI(String errorText) {
 	setTitle("Error");
 	setBounds(100, 100, 450, 300);
 	getContentPane().setLayout(new BorderLayout());
@@ -29,17 +29,17 @@ public class ErrorUI extends JDialog {
 	getContentPane().add(contentPanel, BorderLayout.CENTER);
 	contentPanel.setLayout(new BorderLayout(0, 0));
 	{
-	    final JLabel lblErrortext = new JLabel(errorText);
+	    JLabel lblErrortext = new JLabel(errorText);
 	    lblErrortext.setVerticalAlignment(SwingConstants.TOP);
 	    lblErrortext.setHorizontalAlignment(SwingConstants.LEFT);
 	    contentPanel.add(lblErrortext, BorderLayout.CENTER);
 	}
 	{
-	    final JPanel buttonPane = new JPanel();
+	    JPanel buttonPane = new JPanel();
 	    buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 	    getContentPane().add(buttonPane, BorderLayout.SOUTH);
 	    {
-		final JButton okButton = new JButton("OK");
+		JButton okButton = new JButton("OK");
 		okButton.addActionListener(arg0 -> dispose());
 		okButton.setActionCommand("OK");
 		buttonPane.add(okButton);
@@ -47,6 +47,7 @@ public class ErrorUI extends JDialog {
 	    }
 	}
 	pack();
+	setVisible(true);
     }
 
 }

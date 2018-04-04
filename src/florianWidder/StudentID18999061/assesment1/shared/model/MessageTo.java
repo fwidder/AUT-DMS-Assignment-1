@@ -5,10 +5,10 @@ public class MessageTo extends Message {
     /**
      *
      */
-    private static final long serialVersionUID = -1182471325700008016L;
+    private final static long serialVersionUID = -1182471325700008016L;
     private String rec;
 
-    public MessageTo(final String rec) {
+    public MessageTo(String rec) {
 	this.rec = rec;
     }
 
@@ -16,7 +16,7 @@ public class MessageTo extends Message {
 	return rec;
     }
 
-    public void setRec(final String rec) {
+    public void setRec(String rec) {
 	this.rec = rec;
     }
 

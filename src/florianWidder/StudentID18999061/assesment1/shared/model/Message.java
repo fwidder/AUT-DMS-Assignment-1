@@ -15,7 +15,7 @@ public abstract class Message implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = -7395957707850011524L;
+    private final static long serialVersionUID = -7395957707850011524L;
     private String payload;
     private User sender;
 
@@ -39,11 +39,11 @@ public abstract class Message implements Serializable {
      * @param payload
      *            the payload to set
      */
-    public void setPayload(final String payload) {
+    public void setPayload(String payload) {
 	this.payload = payload;
     }
 
-    public void setSender(final User sender) {
+    public void setSender(User sender) {
 	this.sender = sender;
     }
 }

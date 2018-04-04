@@ -18,7 +18,7 @@ public class Logger {
      *
      * @param o
      */
-    public static void debug(final Object o) {
+    public static void debug(Object o) {
 	Logger.now();
 	System.out.print("[DEBUG] | ");
 	Logger.print(o);
@@ -38,7 +38,7 @@ public class Logger {
      *
      * @param o
      */
-    public static void error(final Object o) {
+    public static void error(Object o) {
 	Logger.now();
 	System.out.print("[ERROR] | ");
 	Logger.print(o);
@@ -50,7 +50,7 @@ public class Logger {
      *
      * @param o
      */
-    public static void info(final Object o) {
+    public static void info(Object o) {
 	Logger.now();
 	System.out.print("[INFO ] | ");
 	Logger.print(o);
@@ -58,12 +58,12 @@ public class Logger {
     }
 
     private static void now() {
-	final SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss.SSS");
-	final String uhrzeit = sdf.format(new Date());
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss.SSS");
+	String uhrzeit = sdf.format(new Date());
 	System.out.print(uhrzeit + " | ");
     }
 
-    private static void print(final Object o) {
+    private static void print(Object o) {
 	System.out.print(o.toString() + " ");
     }
 
@@ -72,7 +72,7 @@ public class Logger {
      *
      * @param o
      */
-    public static void warn(final Object o) {
+    public static void warn(Object o) {
 	Logger.now();
 	System.out.print("[WARN ] | ");
 	Logger.print(o);

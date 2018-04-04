@@ -37,34 +37,33 @@ public class Connection implements Runnable {
      * @throws ClassNotFoundException
      */
     public synchronized static User[] getUserList() throws IOException, ClassNotFoundException {
-	final DatagramSocket clientSocket = new DatagramSocket();
-	final InetAddress IPAddress = ClientMain.getIP();
+	DatagramSocket clientSocket = new DatagramSocket();
+	InetAddress IPAddress = ClientMain.getIP();
 	byte[] sendData = new byte[1024];
-	final byte[] receiveData = new byte[1024];
-	final RequestMessage m = new RequestMessage();
+	byte[] receiveData = new byte[1024];
+	RequestMessage m = new RequestMessage();
 	m.setCode(RequestMessage.request);
 	m.setPayload("userlist");
 	m.setSender(ClientMain.getUser());
-	final ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-	final ObjectOutput oo = new ObjectOutputStream(bStream);
+	ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+	ObjectOutput oo = new ObjectOutputStream(bStream);
 	oo.writeObject(m);
 	oo.close();
 	sendData = bStream.toByteArray();
-	final DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress,
-		ClientMain.getPort());
+	DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, ClientMain.getPort());
 	clientSocket.send(sendPacket);
-	final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+	DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 	clientSocket.receive(receivePacket);
-	final byte[] data = receivePacket.getData();
-	final ByteArrayInputStream in = new ByteArrayInputStream(data);
-	final ObjectInputStream is = new ObjectInputStream(in);
-	final Object o = is.readObject();
+	byte[] data = receivePacket.getData();
+	ByteArrayInputStream in = new ByteArrayInputStream(data);
+	ObjectInputStream is = new ObjectInputStream(in);
+	Object o = is.readObject();
 	if (!(o instanceof ResponseMessage)) {
 	    clientSocket.close();
 	    return new User[0];
 	}
 	clientSocket.close();
-	final ResponseMessage re = (ResponseMessage) o;
+	ResponseMessage re = (ResponseMessage) o;
 	if (re.getResponse() instanceof User[]) {
 	    return (User[]) re.getResponse();
 	}
@@ -76,7 +75,7 @@ public class Connection implements Runnable {
     private Socket socket;
     private boolean login = true;
 
-    private final LinkedBlockingQueue<Message> messages = new LinkedBlockingQueue<>();
+    private LinkedBlockingQueue<Message> messages = new LinkedBlockingQueue<>();
 
     /**
      * @return messages
@@ -93,13 +92,13 @@ public class Connection implements Runnable {
     }
 
     private synchronized void login() throws ClassNotFoundException, IOException {
-	final ConnectMessage m = new ConnectMessage(ClientMain.getUser(), ConnectMessage.loginRequest);
+	ConnectMessage m = new ConnectMessage(ClientMain.getUser(), ConnectMessage.loginRequest);
 	socketWriter.writeObject(m);
-	final Object tmp = socketReader.readObject();
+	Object tmp = socketReader.readObject();
 	if (tmp instanceof ConnectMessage) {
-	    final ConnectMessage in = (ConnectMessage) tmp;
+	    ConnectMessage in = (ConnectMessage) tmp;
 	    if (in.getCode() != ConnectMessage.loginAccept) {
-		final LoginUI login = new LoginUI();
+		LoginUI login = new LoginUI();
 
 		login.setModal(true);
 
@@ -133,16 +132,16 @@ public class Connection implements Runnable {
     public void run() {
 	try {
 	    socket = new Socket(ClientMain.getIP(), ClientMain.getPort());
-	    final OutputStream socketOutputStream = socket.getOutputStream();
-	    final InputStream socketInputStream = socket.getInputStream();
+	    OutputStream socketOutputStream = socket.getOutputStream();
+	    InputStream socketInputStream = socket.getInputStream();
 	    socketReader = new ObjectInputStream(socketInputStream);
 	    socketWriter = new ObjectOutputStream(socketOutputStream);
 	    login();
 
 	    while (true) {
-		final Object o = socketReader.readObject();
+		Object o = socketReader.readObject();
 		if (o instanceof Message) {
-		    final Message m = (Message) o;
+		    Message m = (Message) o;
 		    ClientMain.getUI().newMessage(m);
 		}
 	    }
@@ -157,7 +156,7 @@ public class Connection implements Runnable {
      * @param message
      * @throws IOException
      */
-    public synchronized void sendMessage(final Message message) throws IOException {
+    public synchronized void sendMessage(Message message) throws IOException {
 	socketWriter.writeObject(message);
 
 	ClientMain.getUI().newMessage(message);

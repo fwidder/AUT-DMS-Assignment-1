@@ -16,13 +16,13 @@ public class User implements Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = 3359649237539654074L;
+    private final static long serialVersionUID = 3359649237539654074L;
 
     private String username;
     /**
      * Login time
      */
-    private final LocalDateTime login;
+    private LocalDateTime login;
 
     /**
      * Creates a new User
@@ -30,13 +30,13 @@ public class User implements Serializable {
      * @param username
      *            name of the User
      */
-    public User(final String username) {
+    public User(String username) {
 	this.username = username;
 	login = LocalDateTime.now();
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(Object obj) {
 	if (this == obj) {
 	    return true;
 	}
@@ -46,7 +46,7 @@ public class User implements Serializable {
 	if (getClass() != obj.getClass()) {
 	    return false;
 	}
-	final User other = (User) obj;
+	User other = (User) obj;
 	if (username == null) {
 	    if (other.username != null) {
 		return false;
@@ -73,7 +73,7 @@ public class User implements Serializable {
 
     @Override
     public int hashCode() {
-	final int prime = 31;
+	int prime = 31;
 	int result = 1;
 	result = prime * result + (username == null ? 0 : username.hashCode());
 	return result;
@@ -83,7 +83,7 @@ public class User implements Serializable {
      * @param username
      *            the username to set
      */
-    public void setUsername(final String username) {
+    public void setUsername(String username) {
 	this.username = username;
     }
 

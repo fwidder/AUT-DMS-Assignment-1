@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import florianWidder.StudentID18999061.assesment1.shared.model.User;
 
 /**
+ * Handler for logged in Users
+ * 
  * @author Florian Widder
  * @author Student ID 18999061
  *

@@ -18,16 +18,17 @@ import florianWidder.StudentID18999061.assesment1.shared.util.Logger;
  * @author Student ID 18999061
  *
  */
-public class Server implements Runnable {
+public class TcpServer implements Runnable {
 
     private ServerSocket serverSocket;
+    // Array for holding the client threads
     private ClientThread[] threads;
     private UserController userController;
 
     /**
      *
      */
-    public Server() {
+    public TcpServer() {
 	threads = new ClientThread[ServerMain.maxNumberOfClients];
 	userController = new UserController();
     }
@@ -47,9 +48,11 @@ public class Server implements Runnable {
 	    serverSocket = new ServerSocket(ServerMain.PORT);
 	    while (true) {
 		Socket client;
+		// Wait for clients
 		client = serverSocket.accept();
 		Logger.info("New Client: " + client.getInetAddress());
 		int i;
+		// Check user limit and start new Thread for new Client
 		for (i = 0; i < ServerMain.maxNumberOfClients; i++) {
 		    if (threads[i] == null) {
 			threads[i] = new ClientThread(client, threads, userController);

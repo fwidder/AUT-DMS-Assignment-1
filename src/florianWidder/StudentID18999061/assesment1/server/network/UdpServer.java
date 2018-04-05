@@ -35,10 +35,12 @@ public class UdpServer implements Runnable {
     public void run() {
 	DatagramSocket socket;
 	try {
+	    // Create UDP Socket
 	    socket = new DatagramSocket(ServerMain.PORT);
 	    byte[] incomingData = new byte[1024];
 
 	    while (true) {
+		// Wait for requests
 		DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
 		socket.receive(incomingPacket);
 		byte[] data = incomingPacket.getData();

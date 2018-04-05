@@ -32,32 +32,42 @@ import florianWidder.StudentID18999061.assesment1.shared.util.Logger;
 public class Connection implements Runnable {
 
     /**
+     * Pulls the current List of logged in user's from the Server
+     *
      * @return the Userlist
      * @throws IOException
      * @throws ClassNotFoundException
      */
     public synchronized static User[] getUserList() throws IOException, ClassNotFoundException {
+	// Open connection (UDP)
 	DatagramSocket clientSocket = new DatagramSocket();
 	InetAddress IPAddress = ClientMain.getIP();
+	// Create packages
 	byte[] sendData = new byte[1024];
 	byte[] receiveData = new byte[1024];
+	// Generate request
 	RequestMessage m = new RequestMessage();
 	m.setCode(RequestMessage.request);
 	m.setPayload("userlist");
 	m.setSender(ClientMain.getUser());
+	// Serialize request
 	ByteArrayOutputStream bStream = new ByteArrayOutputStream();
 	ObjectOutput oo = new ObjectOutputStream(bStream);
 	oo.writeObject(m);
 	oo.close();
 	sendData = bStream.toByteArray();
+	// Send request
 	DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, ClientMain.getPort());
 	clientSocket.send(sendPacket);
+	// Receive answer from server
 	DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 	clientSocket.receive(receivePacket);
+	// Deserialize answer
 	byte[] data = receivePacket.getData();
 	ByteArrayInputStream in = new ByteArrayInputStream(data);
 	ObjectInputStream is = new ObjectInputStream(in);
 	Object o = is.readObject();
+	// Parse answer
 	if (!(o instanceof ResponseMessage)) {
 	    clientSocket.close();
 	    return new User[0];
@@ -91,10 +101,18 @@ public class Connection implements Runnable {
 	return login;
     }
 
+    /**
+     * Login in at the Server
+     *
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
     private synchronized void login() throws ClassNotFoundException, IOException {
+	// Create and send request
 	ConnectMessage m = new ConnectMessage(ClientMain.getUser(), ConnectMessage.loginRequest);
 	socketWriter.writeObject(m);
 	Object tmp = socketReader.readObject();
+	// Parse answer
 	if (tmp instanceof ConnectMessage) {
 	    ConnectMessage in = (ConnectMessage) tmp;
 	    if (in.getCode() != ConnectMessage.loginAccept) {
@@ -117,6 +135,8 @@ public class Connection implements Runnable {
     }
 
     /**
+     * Logout
+     *
      * @throws IOException
      */
     public synchronized void logout() throws IOException {
@@ -131,13 +151,17 @@ public class Connection implements Runnable {
     @Override
     public void run() {
 	try {
+	    // Create streams
 	    socket = new Socket(ClientMain.getIP(), ClientMain.getPort());
 	    OutputStream socketOutputStream = socket.getOutputStream();
 	    InputStream socketInputStream = socket.getInputStream();
 	    socketReader = new ObjectInputStream(socketInputStream);
 	    socketWriter = new ObjectOutputStream(socketOutputStream);
+
+	    // Do login
 	    login();
 
+	    // Listen for messages
 	    while (true) {
 		Object o = socketReader.readObject();
 		if (o instanceof Message) {
@@ -153,6 +177,8 @@ public class Connection implements Runnable {
     }
 
     /**
+     * send a message to server
+     *
      * @param message
      * @throws IOException
      */

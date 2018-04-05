@@ -20,6 +20,8 @@ import florianWidder.StudentID18999061.assesment1.shared.model.User;
 import florianWidder.StudentID18999061.assesment1.shared.util.Logger;
 
 /**
+ * Thread for clients
+ *
  * @author Florian Widder
  * @author Student ID 18999061
  *
@@ -48,6 +50,8 @@ public class ClientThread implements Runnable {
     }
 
     /**
+     * Starts login protocol for Client
+     *
      * @throws IOException
      * @throws ClassNotFoundException
      *
@@ -86,6 +90,7 @@ public class ClientThread implements Runnable {
     }
 
     /**
+     * Closes the session
      *
      */
     public void closeSession() {
@@ -104,6 +109,7 @@ public class ClientThread implements Runnable {
 	} catch (ClassNotFoundException | IOException e) {
 	    Logger.warn("Problem configuring client: " + e);
 	}
+	// Wait for client messages
 	while (true) {
 	    try {
 		Object input = in.readObject();
@@ -159,6 +165,8 @@ public class ClientThread implements Runnable {
     }
 
     /**
+     * send a message to client
+     *
      * @param m
      * @throws IOException
      */

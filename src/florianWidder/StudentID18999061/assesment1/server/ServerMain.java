@@ -2,7 +2,7 @@ package florianWidder.StudentID18999061.assesment1.server;
 
 import java.net.UnknownHostException;
 
-import florianWidder.StudentID18999061.assesment1.server.network.Server;
+import florianWidder.StudentID18999061.assesment1.server.network.TcpServer;
 import florianWidder.StudentID18999061.assesment1.server.network.UdpServer;
 import florianWidder.StudentID18999061.assesment1.shared.model.User;
 import florianWidder.StudentID18999061.assesment1.shared.util.IPTools;
@@ -26,7 +26,7 @@ public class ServerMain {
      */
     public static int maxNumberOfClients = 10;
 
-    private static Server server;
+    private static TcpServer server;
 
     public static User[] getUsers() {
 	return ServerMain.server.getUserController().getUserList();
@@ -51,6 +51,7 @@ public class ServerMain {
 			try {
 			    ServerMain.PORT = Integer.parseInt(args[i]);
 			    if (ServerMain.PORT <= 0 || ServerMain.PORT > 65535) {
+				Logger.warn("Bad Port");
 				Logger.warn("Port set to standart (" + ServerMain.PORT + ")");
 				ServerMain.PORT = 12345;
 			    }
@@ -97,11 +98,12 @@ public class ServerMain {
 	} catch (UnknownHostException e) {
 	    Logger.error("Error getting Local IP-Adress or Hostname: " + e);
 	}
-	ServerMain.server = new Server();
+	// Start TCP Thread
+	ServerMain.server = new TcpServer();
 	Thread serverThread = new Thread(ServerMain.server);
 	serverThread.setName("Server TCP");
 	serverThread.start();
-
+	// Start UDP Thread
 	UdpServer udpServer = new UdpServer();
 	Thread udpServerThread = new Thread(udpServer);
 	udpServerThread.setName("Server UDP");

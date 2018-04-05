@@ -52,6 +52,7 @@ public class ClientMain {
 	while (login.isShowing()) {
 	    ;
 	}
+	// Create client Thread TCP
 	ClientMain.connection = new Connection();
 	Thread TCPClient = new Thread(ClientMain.connection);
 	TCPClient.setName("TCPClient");
@@ -66,7 +67,7 @@ public class ClientMain {
 	}
 
 	ClientMain.UI = new ClientUI();
-
+	// Create timer for user list update
 	Timer t = new Timer();
 
 	t.schedule(new TimerTask() {
